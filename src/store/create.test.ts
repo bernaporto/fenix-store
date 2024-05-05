@@ -124,6 +124,20 @@ describe('Store', () => {
     });
   });
 
+  it('should notify the affected observable', () => {
+    const store = Store.create();
+    const observable = store.for('key');
+
+    const observer = jest.fn();
+
+    observable.subscribe(observer);
+
+    observable.set(1);
+
+    expect(observer).toHaveBeenCalled();
+    expect(observable.get()).toBe(1);
+  });
+
   it('should notify all affected parent paths', () => {
     const store = Store.create({
       key1: {

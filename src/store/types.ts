@@ -25,3 +25,8 @@ export type TStoreConfig = {
   utils?: Partial<TUtils>;
   effects?: TStoreEffect[];
 };
+
+export type TObContainer = {
+  $original: TObservable<unknown>;
+  storeOb: TStoreObservable<unknown>;
+};

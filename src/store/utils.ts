@@ -1,9 +1,15 @@
 import { deletePath, getFromPath, setAtPath } from '@/utils/path';
 import { observable, type TObservable } from '@/observable';
 import type { TUtils } from '@/utils/types';
-import type { TState, TStoreEffect, TStoreObservable } from './types';
+import type { TObContainer, TState, TStoreEffect } from './types';
 
-export const setupObservable = (path: string, state: TState, utils: TUtils) => {
+export const setupObservable = (
+  path: string,
+  state: TState,
+  obMap: Map<string, TObContainer>,
+  utils: TUtils,
+  effects?: TStoreEffect[]
+): TObContainer => {
   const initialValue = getFromPath(path, state);
   const ob = observable(initialValue, utils);
   const originalReset = ob.reset;
@@ -13,14 +19,17 @@ export const setupObservable = (path: string, state: TState, utils: TUtils) => {
     setAtPath(path, ob.get(), state);
   };
 
-  return ob;
+  return {
+    $original: ob,
+    storeOb: toStoreOb(ob, path, state, obMap, utils, effects),
+  };
 };
 
-export const patchObservable = <T>(
+const toStoreOb = (
   ob: TObservable<unknown>,
   path: string,
   state: TState,
-  obMap: Map<string, TObservable<unknown>>,
+  obMap: Map<string, TObContainer>,
   utils: TUtils,
   effects?: TStoreEffect[]
 ) => {
@@ -47,10 +56,10 @@ export const patchObservable = <T>(
       Array.from(obMap.keys())
         .filter((p) => p !== path && (path.startsWith(p) || p.startsWith(path)))
         .forEach((p) => {
-          obMap.get(p)?.set(getFromPath(p, state));
+          obMap.get(p)?.$original.set(getFromPath(p, state));
         });
     },
-  } as TStoreObservable<T>;
+  };
 };
 
 const applyEffects = (

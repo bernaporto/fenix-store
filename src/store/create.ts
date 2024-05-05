@@ -1,10 +1,15 @@
 import { clone } from '@/utils/clone';
 import { equals } from '@/utils/equals';
 import { merge } from '@/utils/merge';
-import type { TObservable } from '@/observable/types';
 import type { TUtils } from '@/utils/types';
-import type { TState, TStore, TStoreConfig } from './types';
-import { setupObservable, patchObservable } from './utils';
+import type {
+  TObContainer,
+  TState,
+  TStore,
+  TStoreConfig,
+  TStoreObservable,
+} from './types';
+import { setupObservable } from './utils';
 
 const create = <State extends TState = TState>(
   initialValue: State = Object.create(null),
@@ -12,26 +17,33 @@ const create = <State extends TState = TState>(
 ): TStore<State> => {
   const _utils = merge<TUtils>({ clone, equals }, config?.utils);
   const state = _utils.clone(initialValue);
-  const obMap = new Map<string, TObservable<unknown>>();
+  const obMap = new Map<string, TObContainer>();
 
   return {
     dispose: () => {
       obMap.forEach((ob) => {
-        ob.dispose();
+        ob.$original.dispose();
       });
 
       obMap.clear();
     },
 
-    for: (path) => {
-      let ob = obMap.get(path);
+    for: <T>(path: string) => {
+      let container = obMap.get(path);
 
-      if (!ob) {
-        ob = setupObservable(path, state, _utils);
-        obMap.set(path, ob);
+      if (!container) {
+        container = setupObservable(
+          path,
+          state,
+          obMap,
+          _utils,
+          config?.effects
+        );
+
+        obMap.set(path, container);
       }
 
-      return patchObservable(ob, path, state, obMap, _utils, config?.effects);
+      return container.storeOb as TStoreObservable<T>;
     },
 
     get: () => {
@@ -40,7 +52,7 @@ const create = <State extends TState = TState>(
 
     reset: () => {
       obMap.forEach((ob) => {
-        ob.reset();
+        ob.$original.reset();
       });
     },
   };
