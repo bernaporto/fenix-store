@@ -29,7 +29,7 @@ describe('observable', () => {
       const observer = jest.fn();
 
       ob.subscribe(observer);
-      ob.dispose();
+      ob.clear();
 
       ob.set(2);
 

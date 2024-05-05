@@ -13,7 +13,7 @@ export const observable = <T = unknown>(
   let value = _utils.clone(initialValue);
 
   const self: TObservable<T> = {
-    dispose: () => {
+    clear: () => {
       observers.clear();
     },
 

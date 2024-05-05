@@ -20,9 +20,9 @@ const create = <State extends TState = TState>(
   const obMap = new Map<string, TObContainer>();
 
   return {
-    dispose: () => {
+    clear: () => {
       obMap.forEach((ob) => {
-        ob.$original.dispose();
+        ob.$original.clear();
       });
 
       obMap.clear();

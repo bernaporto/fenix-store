@@ -17,7 +17,7 @@ export type TStore<State extends TState> = {
   for: <T>(path: string) => TStoreObservable<T>;
   get: () => State;
 } & {
-  dispose: VoidFunction;
+  clear: VoidFunction;
   reset: VoidFunction;
 };
 

@@ -9,7 +9,7 @@ describe('Store', () => {
       const observer = jest.fn();
 
       observable.subscribe(observer);
-      store.dispose();
+      store.clear();
 
       observable.set(1);
 

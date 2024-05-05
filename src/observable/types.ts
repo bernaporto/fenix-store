@@ -10,6 +10,6 @@ export type TObservable<T = unknown> = {
   ) => VoidFunction;
   update: (updater: TUpdater<T>) => void;
 } & {
-  dispose: VoidFunction;
+  clear: VoidFunction;
   reset: VoidFunction;
 };
