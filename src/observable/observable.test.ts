@@ -132,4 +132,20 @@ describe('observable', () => {
       expect(ob.get()).toBe(2);
     });
   });
+
+  describe('observers', () => {
+    describe('count', () => {
+      it('should return the number of observers', () => {
+        const ob = observable(1);
+
+        const observer1 = jest.fn();
+        const observer2 = jest.fn();
+
+        ob.subscribe(observer1);
+        ob.subscribe(observer2);
+
+        expect(ob.observers.count).toBe(2);
+      });
+    });
+  });
 });

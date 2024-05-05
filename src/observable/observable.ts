@@ -50,6 +50,12 @@ export const observable = <T = unknown>(
       const next = updater(value as T);
       self.set(next);
     },
+
+    observers: {
+      get count() {
+        return observers.size;
+      },
+    },
   };
 
   return self;

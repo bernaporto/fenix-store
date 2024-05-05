@@ -22,8 +22,10 @@ export type TStore<State extends TState> = {
 };
 
 export type TStoreConfig = {
-  utils?: Partial<TUtils>;
-  effects?: TStoreEffect[];
+  debug: boolean;
+  effects: TStoreEffect[];
+  utils: TUtils;
+  debugKey?: string;
 };
 
 export type TObContainer = {

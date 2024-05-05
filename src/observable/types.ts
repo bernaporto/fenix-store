@@ -12,4 +12,7 @@ export type TObservable<T = unknown> = {
 } & {
   clear: VoidFunction;
   reset: VoidFunction;
+  observers: {
+    count: number;
+  };
 };

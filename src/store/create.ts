@@ -11,12 +11,22 @@ import type {
 } from './types';
 import { setupObservable } from './utils';
 
+type TOptionalStoreConfig = Omit<Partial<TStoreConfig>, 'utils'> & {
+  utils?: Partial<TUtils>;
+};
+
+const defaultConfig: TStoreConfig = {
+  utils: { clone, equals },
+  effects: [],
+  debug: false,
+};
+
 const create = <State extends TState = TState>(
   initialValue: State = Object.create(null),
-  config?: TStoreConfig
+  config?: TOptionalStoreConfig
 ): TStore<State> => {
-  const _utils = merge<TUtils>({ clone, equals }, config?.utils);
-  const state = _utils.clone(initialValue);
+  const _config = merge<TStoreConfig>(defaultConfig, config);
+  const state = _config.utils.clone(initialValue);
   const obMap = new Map<string, TObContainer>();
 
   return {
@@ -32,13 +42,7 @@ const create = <State extends TState = TState>(
       let container = obMap.get(path);
 
       if (!container) {
-        container = setupObservable(
-          path,
-          state,
-          obMap,
-          _utils,
-          config?.effects
-        );
+        container = setupObservable(path, state, obMap, _config);
 
         obMap.set(path, container);
       }

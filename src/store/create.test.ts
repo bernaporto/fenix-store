@@ -1,6 +1,66 @@
 import { Store } from '@/store';
 
 describe('Store', () => {
+  it('should notify the affected observable', () => {
+    const store = Store.create();
+    const observable = store.for('key');
+
+    const observer = jest.fn();
+
+    observable.subscribe(observer);
+
+    observable.set(1);
+
+    expect(observer).toHaveBeenCalled();
+    expect(observable.get()).toBe(1);
+  });
+
+  it('should notify all affected parent paths', () => {
+    const store = Store.create({
+      key1: {
+        key2: 0,
+      },
+    });
+
+    const observable1 = store.for('key1');
+    const observable2 = store.for('key1.key2');
+
+    const observer1 = jest.fn();
+    const observer2 = jest.fn();
+
+    observable1.subscribe(observer1);
+    observable2.subscribe(observer2);
+
+    observable2.set(1);
+
+    expect(observer2).toHaveBeenCalled();
+    expect(observer1).toHaveBeenCalled();
+    expect(observable1.get()).toEqual({ key2: 1 });
+  });
+
+  it('should notify all affected child paths', () => {
+    const store = Store.create({
+      key1: {
+        key2: 0,
+      },
+    });
+
+    const observable1 = store.for('key1');
+    const observable2 = store.for('key1.key2');
+
+    const observer1 = jest.fn();
+    const observer2 = jest.fn();
+
+    observable1.subscribe(observer1);
+    observable2.subscribe(observer2);
+
+    observable1.set({ key2: 1 });
+
+    expect(observer1).toHaveBeenCalled();
+    expect(observer2).toHaveBeenCalled();
+    expect(observable2.get()).toBe(1);
+  });
+
   describe('dispose', () => {
     it('should clear all observables', () => {
       const store = Store.create();
@@ -124,63 +184,33 @@ describe('Store', () => {
     });
   });
 
-  it('should notify the affected observable', () => {
-    const store = Store.create();
-    const observable = store.for('key');
-
-    const observer = jest.fn();
-
-    observable.subscribe(observer);
-
-    observable.set(1);
-
-    expect(observer).toHaveBeenCalled();
-    expect(observable.get()).toBe(1);
-  });
-
-  it('should notify all affected parent paths', () => {
-    const store = Store.create({
-      key1: {
-        key2: 0,
-      },
+  describe('config.debug', () => {
+    beforeAll(() => {
+      jest.spyOn(console, 'groupCollapsed').mockImplementation(() => {});
+      jest.spyOn(console, 'log').mockImplementation(() => {});
     });
 
-    const observable1 = store.for('key1');
-    const observable2 = store.for('key1.key2');
-
-    const observer1 = jest.fn();
-    const observer2 = jest.fn();
-
-    observable1.subscribe(observer1);
-    observable2.subscribe(observer2);
-
-    observable2.set(1);
-
-    expect(observer2).toHaveBeenCalled();
-    expect(observer1).toHaveBeenCalled();
-    expect(observable1.get()).toEqual({ key2: 1 });
-  });
-
-  it('should notify all affected child paths', () => {
-    const store = Store.create({
-      key1: {
-        key2: 0,
-      },
+    afterAll(() => {
+      jest.restoreAllMocks();
     });
 
-    const observable1 = store.for('key1');
-    const observable2 = store.for('key1.key2');
+    it('should log the changes', () => {
+      const store = Store.create(undefined, {
+        debug: true,
+        debugKey: 'Store Test',
+      });
 
-    const observer1 = jest.fn();
-    const observer2 = jest.fn();
+      const observable = store.for('key');
 
-    observable1.subscribe(observer1);
-    observable2.subscribe(observer2);
+      observable.set(1);
 
-    observable1.set({ key2: 1 });
-
-    expect(observer1).toHaveBeenCalled();
-    expect(observer2).toHaveBeenCalled();
-    expect(observable2.get()).toBe(1);
+      expect(console.groupCollapsed).toHaveBeenCalled();
+      expect(console.log).toHaveBeenCalled();
+      expect(console.groupCollapsed).toHaveBeenCalledWith(
+        expect.stringContaining('[Store Test] store.set'),
+        expect.any(String),
+        expect.any(String)
+      );
+    });
   });
 });
