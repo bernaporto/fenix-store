@@ -1,0 +1,23 @@
+{
+  "name": "fenix-store",
+  "version": "0.0.0",
+  "description": "A state management library designed by Fenix Team",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "jest --coverage --watch",
+    "test": "jest --coverage",
+    "build": "vite build && tsc",
+    "postinstall": "yarn build"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "vite-tsconfig-paths": "^4.3.2"
+  }
+}
