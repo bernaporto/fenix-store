@@ -16,10 +16,25 @@ describe('observable', () => {
     expect(ob).toHaveProperty('update');
   });
 
-  it('should have initial value as null by default', () => {
+  it('should have initial value as undefined by default', () => {
     const ob = observable();
 
-    expect(ob.get()).toBe(null);
+    expect(ob.get()).toBe(undefined);
+  });
+
+  describe('dispose', () => {
+    it('should clear all observers', () => {
+      const ob = observable(1);
+
+      const observer = jest.fn();
+
+      ob.subscribe(observer);
+      ob.dispose();
+
+      ob.set(2);
+
+      expect(observer).not.toHaveBeenCalled();
+    });
   });
 
   describe('get', () => {
@@ -35,20 +50,7 @@ describe('observable', () => {
   });
 
   describe('reset', () => {
-    it('should clear all observers', () => {
-      const ob = observable(1);
-
-      const observer = jest.fn();
-
-      ob.subscribe(observer);
-      ob.reset();
-
-      ob.set(2);
-
-      expect(observer).not.toHaveBeenCalled();
-    });
-
-    it('should set the state to the initial value', () => {
+    it('should reset the state to the initial value', () => {
       const ob = observable(1);
 
       ob.set(2);
@@ -117,7 +119,7 @@ describe('observable', () => {
 
       ob.subscribe(observer, true);
 
-      expect(observer).toHaveBeenLastCalledWith(1, null);
+      expect(observer).toHaveBeenLastCalledWith(1);
     });
   });
 

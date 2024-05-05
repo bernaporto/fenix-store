@@ -1,30 +1,36 @@
 import type { TObservable, TObserver } from './types';
-import { clone, equals, merge, type TUtils } from '@/utils';
+import { clone } from '@/utils/clone';
+import { equals } from '@/utils/equals';
+import { merge } from '@/utils/merge';
+import type { TUtils } from '@/utils/types';
 
 export const observable = <T = unknown>(
-  initialValue: T | null = null,
+  initialValue?: T,
   utils: Partial<TUtils> = {}
 ): TObservable<T> => {
   const observers = new Set<TObserver<T>>();
-  const tools = merge<TUtils>({ clone, equals }, utils);
-  let value = tools.clone(initialValue);
+  const _utils = merge<TUtils>({ clone, equals }, utils);
+  let value = _utils.clone(initialValue);
 
   const self: TObservable<T> = {
-    get: () => tools.clone(value),
+    dispose: () => {
+      observers.clear();
+    },
+
+    get: () => _utils.clone(value) as T,
 
     reset: () => {
-      observers.clear();
-      value = tools.clone(initialValue);
+      self.set(initialValue as T);
     },
 
     set: (next) => {
-      if (tools.equals(value, next)) return;
+      if (_utils.equals(value, next)) return;
 
-      const previous = tools.clone(value);
-      value = tools.clone(next);
+      const previous = _utils.clone(value);
+      value = _utils.clone(next);
 
       observers.forEach((observer) => {
-        observer(tools.clone(next), tools.clone(previous));
+        observer(_utils.clone(next), _utils.clone(previous));
       });
     },
 
@@ -32,7 +38,7 @@ export const observable = <T = unknown>(
       observers.add(observer);
 
       if (notifyImmediately) {
-        observer(tools.clone(value), null);
+        observer(_utils.clone(value) as T);
       }
 
       return () => {

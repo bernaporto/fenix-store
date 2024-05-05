@@ -1,8 +1,8 @@
-export type TObserver<T> = (value: T | null, previous: T | null) => void;
+export type TObserver<T> = (value: T, previous?: T) => void;
 type TUpdater<T> = (value: T) => T;
 
 export type TObservable<T = unknown> = {
-  get: () => T | null;
+  get: () => T;
   set: (value: T) => void;
   subscribe: (
     observer: TObserver<T>,
@@ -10,5 +10,6 @@ export type TObservable<T = unknown> = {
   ) => VoidFunction;
   update: (updater: TUpdater<T>) => void;
 } & {
+  dispose: VoidFunction;
   reset: VoidFunction;
 };
