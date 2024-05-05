@@ -4,12 +4,17 @@ import type { TUtils } from '@/utils/types';
 export type TState = Record<string, unknown>;
 export type TStoreEffect = (
   path: string,
-  next: unknown,
+  value: unknown,
   previous?: unknown
-) => unknown | void;
+) => { next: unknown } | void;
+
+export type TStoreObservable<T> = Pick<
+  TObservable<T>,
+  'get' | 'reset' | 'set' | 'subscribe' | 'update'
+>;
 
 export type TStore<State extends TState> = {
-  for: <T>(path: string) => TObservable<T>;
+  for: <T>(path: string) => TStoreObservable<T>;
   get: () => State;
 } & {
   dispose: VoidFunction;

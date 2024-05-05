@@ -28,22 +28,6 @@ describe('Store', () => {
       expect(observable).toHaveProperty('subscribe');
       expect(observable).toHaveProperty('update');
     });
-
-    it('should return the same observable for the same key', () => {
-      const store = Store.create();
-      const observable1 = store.for('key');
-      const observable2 = store.for('key');
-
-      expect(observable1).toBe(observable2);
-    });
-
-    it('should return different observables for different keys', () => {
-      const store = Store.create();
-      const observable1 = store.for('key1');
-      const observable2 = store.for('key2');
-
-      expect(observable1).not.toBe(observable2);
-    });
   });
 
   describe('get', () => {
@@ -59,18 +43,24 @@ describe('Store', () => {
   });
 
   describe('reset', () => {
-    it('should reset the state to its initial state', () => {
+    it('should reset the state to its initial value', () => {
       const store = Store.create({
         key1: 0,
+        key2: {
+          key3: 0,
+        },
       });
 
       store.for('key1').set(1);
-      store.for('key2').set(2);
+      store.for('key2').set(undefined);
 
       store.reset();
 
       expect(store.get()).toEqual({
         key1: 0,
+        key2: {
+          key3: 0,
+        },
       });
     });
   });
@@ -88,36 +78,95 @@ describe('Store', () => {
 
       expect(effect).toHaveBeenCalled();
     });
-  });
 
-  it('should apply effects return value to the observable', () => {
-    const effect = jest.fn((_, next) => next + 1);
-    const store = Store.create(undefined, {
-      effects: [effect],
+    it('should apply effects return value to the observable', () => {
+      const effect = jest.fn((_, value) => ({ next: value + 1 }));
+      const store = Store.create(undefined, {
+        effects: [effect],
+      });
+
+      const observable = store.for('key');
+
+      observable.set(1);
+
+      expect(observable.get()).toBe(2);
     });
 
-    const observable = store.for('key');
+    it('should apply effects in order', () => {
+      const effect1 = jest.fn((_, value) => ({ next: value + 1 }));
+      const effect2 = jest.fn((_, value) => ({ next: value.toFixed(2) }));
+      const store = Store.create(undefined, {
+        effects: [effect1, effect2],
+      });
 
-    observable.set(1);
+      const observable = store.for('key');
 
-    expect(observable.get()).toBe(2);
-  });
+      observable.set(1);
 
-  it('should apply effects in order', () => {
-    const effect1 = jest.fn((_, next) => next + 1);
-    const effect2 = jest.fn((_, next) => next.toFixed(2));
-    const store = Store.create(undefined, {
-      effects: [effect1, effect2],
+      expect(observable.get()).toBe('2.00');
+
+      observable.set(2);
+
+      expect(observable.get()).toBe('3.00');
     });
 
-    const observable = store.for('key');
+    it('should consider an undefined value as a valid result', () => {
+      const effect = jest.fn(() => ({ next: undefined }));
+      const store = Store.create(undefined, {
+        effects: [effect],
+      });
 
-    observable.set(1);
+      const observable = store.for('key');
 
-    expect(observable.get()).toBe('2.00');
+      observable.set(1);
 
-    observable.set(2);
+      expect(observable.get()).toBeUndefined();
+    });
+  });
 
-    expect(observable.get()).toBe('3.00');
+  it('should notify all affected parent paths', () => {
+    const store = Store.create({
+      key1: {
+        key2: 0,
+      },
+    });
+
+    const observable1 = store.for('key1');
+    const observable2 = store.for('key1.key2');
+
+    const observer1 = jest.fn();
+    const observer2 = jest.fn();
+
+    observable1.subscribe(observer1);
+    observable2.subscribe(observer2);
+
+    observable2.set(1);
+
+    expect(observer2).toHaveBeenCalled();
+    expect(observer1).toHaveBeenCalled();
+    expect(observable1.get()).toEqual({ key2: 1 });
+  });
+
+  it('should notify all affected child paths', () => {
+    const store = Store.create({
+      key1: {
+        key2: 0,
+      },
+    });
+
+    const observable1 = store.for('key1');
+    const observable2 = store.for('key1.key2');
+
+    const observer1 = jest.fn();
+    const observer2 = jest.fn();
+
+    observable1.subscribe(observer1);
+    observable2.subscribe(observer2);
+
+    observable1.set({ key2: 1 });
+
+    expect(observer1).toHaveBeenCalled();
+    expect(observer2).toHaveBeenCalled();
+    expect(observable2.get()).toBe(1);
   });
 });

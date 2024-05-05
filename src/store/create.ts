@@ -4,7 +4,7 @@ import { merge } from '@/utils/merge';
 import type { TObservable } from '@/observable/types';
 import type { TUtils } from '@/utils/types';
 import type { TState, TStore, TStoreConfig } from './types';
-import { getObservable } from './utils';
+import { setupObservable, patchObservable } from './utils';
 
 const create = <State extends TState = TState>(
   initialValue: State = Object.create(null),
@@ -23,13 +23,15 @@ const create = <State extends TState = TState>(
       obMap.clear();
     },
 
-    for: <T>(path: string) => {
-      if (!obMap.has(path)) {
-        const ob = getObservable(path, state, _utils, config?.effects);
+    for: (path) => {
+      let ob = obMap.get(path);
+
+      if (!ob) {
+        ob = setupObservable(path, state, _utils);
         obMap.set(path, ob);
       }
 
-      return obMap.get(path) as TObservable<T>;
+      return patchObservable(ob, path, state, obMap, _utils, config?.effects);
     },
 
     get: () => {

@@ -1,35 +1,56 @@
 import { deletePath, getFromPath, setAtPath } from '@/utils/path';
-import { observable } from '@/observable';
+import { observable, type TObservable } from '@/observable';
 import type { TUtils } from '@/utils/types';
-import type { TState, TStoreEffect } from './types';
+import type { TState, TStoreEffect, TStoreObservable } from './types';
 
-export const getObservable = (
+export const setupObservable = (path: string, state: TState, utils: TUtils) => {
+  const initialValue = getFromPath(path, state);
+  const ob = observable(initialValue, utils);
+  const originalReset = ob.reset;
+
+  ob.reset = () => {
+    originalReset();
+    setAtPath(path, ob.get(), state);
+  };
+
+  return ob;
+};
+
+export const patchObservable = <T>(
+  ob: TObservable<unknown>,
   path: string,
   state: TState,
+  obMap: Map<string, TObservable<unknown>>,
   utils: TUtils,
   effects?: TStoreEffect[]
 ) => {
-  const ob = observable(getFromPath(path, state), utils);
-  const originalSet = ob.set;
+  return {
+    get: ob.get,
+    reset: ob.reset,
+    subscribe: ob.subscribe,
+    update: ob.update,
 
-  ob.set = (value: unknown) => {
-    const next = effects
-      ? applyEffects(path, value, getFromPath(path, state), effects, utils)
-      : value;
+    set: (value: unknown) => {
+      const next = effects
+        ? applyEffects(path, value, getFromPath(path, state), effects, utils)
+        : value;
 
-    originalSet(next);
-  };
+      if (next === undefined) {
+        deletePath(path, state);
+      } else {
+        setAtPath(path, utils.clone(next), state);
+      }
 
-  ob.subscribe((value) => {
-    if (value === undefined) {
-      deletePath(path, state);
-      return;
-    }
+      ob.set(next);
 
-    setAtPath(path, value, state);
-  });
-
-  return ob;
+      // update all observables that are affected by this change
+      Array.from(obMap.keys())
+        .filter((p) => p !== path && (path.startsWith(p) || p.startsWith(path)))
+        .forEach((p) => {
+          obMap.get(p)?.set(getFromPath(p, state));
+        });
+    },
+  } as TStoreObservable<T>;
 };
 
 const applyEffects = (
@@ -40,7 +61,15 @@ const applyEffects = (
   utils: TUtils
 ) =>
   effects.reduce<unknown>(
-    (acc, effect) =>
-      effect(path, utils.clone(acc), utils.clone(previous)) ?? acc,
+    (acc, effect) => {
+      const result = effect(path, utils.clone(acc), utils.clone(previous));
+
+      if (result === undefined) {
+        return acc;
+      }
+
+      return result.next;
+    },
+
     next
   );
