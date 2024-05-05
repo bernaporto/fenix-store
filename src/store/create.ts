@@ -1,17 +1,16 @@
 import { clone } from '@/utils/clone';
-import { deletePath, getFromPath, setAtPath } from '@/utils/path';
 import { equals } from '@/utils/equals';
 import { merge } from '@/utils/merge';
-import { observable } from '@/observable';
 import type { TObservable } from '@/observable/types';
 import type { TUtils } from '@/utils/types';
-import type { TState, TStore } from './types';
+import type { TState, TStore, TStoreConfig } from './types';
+import { getObservable } from './utils';
 
 const create = <State extends TState = TState>(
-  initialValue: State = {} as State,
-  utils: Partial<TUtils> = {}
+  initialValue: State = Object.create(null),
+  config?: TStoreConfig
 ): TStore<State> => {
-  const _utils = merge<TUtils>({ clone, equals }, utils);
+  const _utils = merge<TUtils>({ clone, equals }, config?.utils);
   const state = _utils.clone(initialValue);
   const obMap = new Map<string, TObservable<unknown>>();
 
@@ -26,17 +25,8 @@ const create = <State extends TState = TState>(
 
     for: <T>(path: string) => {
       if (!obMap.has(path)) {
-        const ob = observable(getFromPath(path, state), _utils);
+        const ob = getObservable(path, state, _utils, config?.effects);
         obMap.set(path, ob);
-
-        ob.subscribe((value) => {
-          if (value === undefined) {
-            deletePath(path, state);
-            return;
-          }
-
-          setAtPath(path, value, state);
-        });
       }
 
       return obMap.get(path) as TObservable<T>;

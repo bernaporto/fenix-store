@@ -1,6 +1,12 @@
 import type { TObservable } from '@/observable';
+import type { TUtils } from '@/utils/types';
 
 export type TState = Record<string, unknown>;
+export type TStoreEffect = (
+  path: string,
+  next: unknown,
+  previous?: unknown
+) => unknown | void;
 
 export type TStore<State extends TState> = {
   for: <T>(path: string) => TObservable<T>;
@@ -8,4 +14,9 @@ export type TStore<State extends TState> = {
 } & {
   dispose: VoidFunction;
   reset: VoidFunction;
+};
+
+export type TStoreConfig = {
+  utils?: Partial<TUtils>;
+  effects?: TStoreEffect[];
 };
