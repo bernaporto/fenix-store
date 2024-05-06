@@ -29,7 +29,7 @@ const create = <State extends TState = TState>(
   return {
     clear: () => {
       obMap.forEach((ob) => {
-        ob.original.observers.clear();
+        ob.proxy.observers.clear();
       });
 
       effects.clear();
@@ -54,7 +54,7 @@ const create = <State extends TState = TState>(
 
     reset: () => {
       obMap.forEach((ob) => {
-        ob.original.reset();
+        ob.proxy.reset();
       });
     },
 

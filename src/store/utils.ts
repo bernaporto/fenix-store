@@ -1,12 +1,12 @@
 import { deletePath, getFromPath, setAtPath } from '@/utils/path';
-import { observable, type TObservable } from '@/observable';
+import { isNotNullable } from '@/utils/nullable';
+import { observable } from '@/observable';
 import type {
   TExtendedEffectManager,
   TObProxyContainer,
   TState,
   TStoreConfig,
 } from './types';
-import { isNotNullable } from '@/utils/nullable';
 
 export const setupObservable = (
   path: string,
@@ -17,35 +17,16 @@ export const setupObservable = (
 ): TObProxyContainer => {
   const initialValue = getFromPath(path, state);
   const ob = observable(initialValue, config.utils);
-  const originalReset = ob.reset;
 
-  ob.reset = () => {
-    originalReset();
-    setAtPath(path, ob.get(), state);
-  };
-
-  return {
-    original: ob,
-    proxy: toStoreOb(ob, path, state, obMap, config, effects),
-  };
-};
-
-const toStoreOb = (
-  ob: TObservable<unknown>,
-  path: string,
-  state: TState,
-  obMap: Map<string, TObProxyContainer>,
-  config: TStoreConfig,
-  effects: TExtendedEffectManager
-) => {
-  const { debug, debugKey, utils } = config;
-
-  return {
+  const proxy = {
     get: ob.get,
     observers: ob.observers,
-    reset: ob.reset,
     subscribe: ob.subscribe,
-    update: ob.update,
+
+    reset: () => {
+      proxy.set(initialValue, 'reset');
+      setAtPath(path, proxy.get(), state);
+    },
 
     set: (value: unknown, logKey = 'set') => {
       const previous = ob.get();
@@ -58,26 +39,37 @@ const toStoreOb = (
         setAtPath(path, ob.get(), state);
       }
 
-      // update all observables that are affected by this change
+      // Update all observables that are affected by this change
       Array.from(obMap.keys())
         .filter((p) => p !== path && (path.startsWith(p) || p.startsWith(path)))
         .forEach((p) => {
           obMap.get(p)?.original.set(getFromPath(p, state));
         });
 
-      if (debug) {
+      if (config.debug) {
         log({
           path,
-          baseMsg: getDebugMessage(`store.${logKey}`, debugKey),
+          baseMsg: getDebugMessage(`store.${logKey}`, config.debugKey),
           newValue: ob.get(),
-          oldValue: utils.clone(previous),
+          oldValue: config.utils.clone(previous),
           observers: ob.observers.count,
         });
       }
     },
+
+    update: <T>(updater: (value: Readonly<T>) => T) => {
+      const next = updater(proxy.get() as T);
+      proxy.set(next, 'update');
+    },
+  };
+
+  return {
+    proxy,
+    original: ob,
   };
 };
 
+/* EFFECTS */
 const applyEffects = (
   path: string,
   next: unknown,
