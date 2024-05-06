@@ -28,7 +28,7 @@ export type TStoreConfig = {
   debugKey?: string;
 };
 
-export type TObContainer = {
-  $original: TObservable<unknown>;
-  storeOb: TStoreObservable<unknown>;
+export type TObProxyContainer = {
+  original: TObservable<unknown>;
+  proxy: TStoreObservable<unknown>;
 };

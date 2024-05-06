@@ -3,7 +3,7 @@ import { equals } from '@/utils/equals';
 import { merge } from '@/utils/merge';
 import type { TUtils } from '@/utils/types';
 import type {
-  TObContainer,
+  TObProxyContainer,
   TState,
   TStore,
   TStoreConfig,
@@ -27,12 +27,12 @@ const create = <State extends TState = TState>(
 ): TStore<State> => {
   const _config = merge<TStoreConfig>(defaultConfig, config);
   const state = _config.utils.clone(initialValue);
-  const obMap = new Map<string, TObContainer>();
+  const obMap = new Map<string, TObProxyContainer>();
 
   return {
     clear: () => {
       obMap.forEach((ob) => {
-        ob.$original.clear();
+        ob.original.observers.clear();
       });
 
       obMap.clear();
@@ -47,7 +47,7 @@ const create = <State extends TState = TState>(
         obMap.set(path, container);
       }
 
-      return container.storeOb as TStoreObservable<T>;
+      return container.proxy as TStoreObservable<T>;
     },
 
     get: () => {
@@ -56,7 +56,7 @@ const create = <State extends TState = TState>(
 
     reset: () => {
       obMap.forEach((ob) => {
-        ob.$original.reset();
+        ob.original.reset();
       });
     },
   };

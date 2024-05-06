@@ -26,11 +26,11 @@ export const observable = <T = unknown>(
     set: (next) => {
       if (_utils.equals(value, next)) return;
 
-      const previous = _utils.clone(value);
+      const previous = self.get();
       value = _utils.clone(next);
 
       observers.forEach((observer) => {
-        observer(_utils.clone(next), _utils.clone(previous));
+        observer(_utils.clone(next), previous);
       });
     },
 
@@ -38,7 +38,7 @@ export const observable = <T = unknown>(
       observers.add(observer);
 
       if (notifyImmediately) {
-        observer(_utils.clone(value) as T);
+        observer(self.get());
       }
 
       return () => {
@@ -47,7 +47,7 @@ export const observable = <T = unknown>(
     },
 
     update: (updater) => {
-      const next = updater(value as T);
+      const next = updater(self.get());
       self.set(next);
     },
 
