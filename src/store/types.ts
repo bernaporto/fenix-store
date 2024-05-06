@@ -9,7 +9,7 @@ export type TStoreEffect = (
 ) => { next: unknown } | void;
 
 export type TStore<State extends TState> = {
-  for: <T>(path: string) => TObservable<T>;
+  on: <T>(path: string) => TObservable<T>;
   get: () => State;
 } & {
   clear: VoidFunction;

@@ -1,14 +1,9 @@
 import { clone } from '@/utils/clone';
 import { equals } from '@/utils/equals';
 import { merge } from '@/utils/merge';
+import type { TObservable } from '@/observable';
 import type { TUtils } from '@/utils/types';
-import type {
-  TObProxyContainer,
-  TState,
-  TStore,
-  TStoreConfig,
-  TStoreObservable,
-} from './types';
+import type { TObProxyContainer, TState, TStore, TStoreConfig } from './types';
 import { setupObservable } from './utils';
 
 type TOptionalStoreConfig = Omit<Partial<TStoreConfig>, 'utils'> & {
@@ -38,7 +33,7 @@ const create = <State extends TState = TState>(
       obMap.clear();
     },
 
-    for: <T>(path: string) => {
+    on: <T>(path: string) => {
       let container = obMap.get(path);
 
       if (!container) {
@@ -47,7 +42,7 @@ const create = <State extends TState = TState>(
         obMap.set(path, container);
       }
 
-      return container.proxy as TStoreObservable<T>;
+      return container.proxy as TObservable<T>;
     },
 
     get: () => {

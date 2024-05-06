@@ -3,7 +3,7 @@ import { Store } from '@/store';
 describe('Store', () => {
   it('should notify the affected observable', () => {
     const store = Store.create();
-    const observable = store.for('key');
+    const observable = store.on('key');
 
     const observer = jest.fn();
 
@@ -22,8 +22,8 @@ describe('Store', () => {
       },
     });
 
-    const observable1 = store.for('key1');
-    const observable2 = store.for('key1.key2');
+    const observable1 = store.on('key1');
+    const observable2 = store.on('key1.key2');
 
     const observer1 = jest.fn();
     const observer2 = jest.fn();
@@ -45,8 +45,8 @@ describe('Store', () => {
       },
     });
 
-    const observable1 = store.for('key1');
-    const observable2 = store.for('key1.key2');
+    const observable1 = store.on('key1');
+    const observable2 = store.on('key1.key2');
 
     const observer1 = jest.fn();
     const observer2 = jest.fn();
@@ -64,7 +64,7 @@ describe('Store', () => {
   describe('dispose', () => {
     it('should clear all observables', () => {
       const store = Store.create();
-      const observable = store.for('key');
+      const observable = store.on('key');
 
       const observer = jest.fn();
 
@@ -77,10 +77,10 @@ describe('Store', () => {
     });
   });
 
-  describe('for', () => {
+  describe('on', () => {
     it('should return an observable', () => {
       const store = Store.create();
-      const observable = store.for('key');
+      const observable = store.on('key');
 
       expect(observable).toBeDefined();
       expect(observable).toHaveProperty('get');
@@ -96,7 +96,7 @@ describe('Store', () => {
 
       expect(store.get()).toEqual({});
 
-      store.for('key').set(1);
+      store.on('key').set(1);
 
       expect(store.get()).toEqual({ key: 1 });
     });
@@ -111,8 +111,8 @@ describe('Store', () => {
         },
       });
 
-      store.for('key1').set(1);
-      store.for('key2').set(undefined);
+      store.on('key1').set(1);
+      store.on('key2').set(undefined);
 
       store.reset();
 
@@ -132,7 +132,7 @@ describe('Store', () => {
         effects: [effect],
       });
 
-      const observable = store.for('key');
+      const observable = store.on('key');
 
       observable.set(1);
 
@@ -145,7 +145,7 @@ describe('Store', () => {
         effects: [effect],
       });
 
-      const observable = store.for('key');
+      const observable = store.on('key');
 
       observable.set(1);
 
@@ -159,7 +159,7 @@ describe('Store', () => {
         effects: [effect1, effect2],
       });
 
-      const observable = store.for('key');
+      const observable = store.on('key');
 
       observable.set(1);
 
@@ -176,7 +176,7 @@ describe('Store', () => {
         effects: [effect],
       });
 
-      const observable = store.for('key');
+      const observable = store.on('key');
 
       observable.set(1);
 
@@ -200,7 +200,7 @@ describe('Store', () => {
         debugKey: 'Store Test',
       });
 
-      const observable = store.for('key');
+      const observable = store.on('key');
 
       observable.set(1);
 
