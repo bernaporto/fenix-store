@@ -228,7 +228,7 @@ describe('Store', () => {
       expect(console.groupCollapsed).toHaveBeenCalledWith(
         expect.stringContaining('[Store Test] store.set'),
         expect.any(String),
-        expect.any(String)
+        expect.any(String),
       );
     });
   });

@@ -6,7 +6,7 @@ import type { TUtils } from '@/utils/types';
 
 export const observable = <T = unknown>(
   initialValue?: T,
-  utils: Partial<TUtils> = {}
+  utils: Partial<TUtils> = {},
 ): TObservable<T> => {
   const observers = new Set<TObserver<T>>();
   const _utils = merge<TUtils>({ clone, equals }, utils);

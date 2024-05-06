@@ -13,7 +13,7 @@ export type TObservable<T = unknown> = {
   set: (value: T) => void;
   subscribe: (
     observer: TObserver<T>,
-    notifyImmediately?: boolean
+    notifyImmediately?: boolean,
   ) => VoidFunction;
   update: (updater: TUpdater<T>) => void;
 } & {

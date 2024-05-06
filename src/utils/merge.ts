@@ -18,7 +18,7 @@ export const merge = <T>(a: unknown, b: unknown): T => {
   return [...Object.keys(a), ...Object.keys(b)].reduce((acc, key) => {
     acc[key] = merge(
       (a as Record<string, unknown>)[key],
-      (b as Record<string, unknown>)[key]
+      (b as Record<string, unknown>)[key],
     );
     return acc;
   }, Object.create(null)) as T;

@@ -15,7 +15,7 @@ export type TState = Record<string, unknown>;
 export type TStoreEffect = (
   path: string,
   value: unknown,
-  previous?: unknown
+  previous?: unknown,
 ) => { next: unknown } | void;
 
 export type TStore<State extends TState> = {

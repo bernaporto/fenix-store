@@ -30,7 +30,7 @@ export const deletePath = (path: string, obj: TUnknownObject): void => {
 
 export const getFromPath = (
   path: string,
-  obj: TUnknownObject
+  obj: TUnknownObject,
 ): unknown | undefined => {
   const keys = path.split(PATH_SEPARATOR);
 
@@ -46,7 +46,7 @@ export const getFromPath = (
 export const setAtPath = (
   path: string,
   value: unknown,
-  obj: TUnknownObject
+  obj: TUnknownObject,
 ): void => {
   if (isNullable(obj)) {
     return;

@@ -18,7 +18,7 @@ const defaultConfig: TStoreConfig = {
 
 const create = <State extends TState = TState>(
   initialValue: State = Object.create(null),
-  config?: TOptionalStoreConfig
+  config?: TOptionalStoreConfig,
 ): TStore<State> => {
   const effects = getEffectManager();
   const obMap = new Map<string, TObProxyContainer>();

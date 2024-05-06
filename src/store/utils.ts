@@ -13,7 +13,7 @@ export const setupObservable = (
   state: TState,
   obMap: Map<string, TObProxyContainer>,
   config: TStoreConfig,
-  effects: TExtendedEffectManager
+  effects: TExtendedEffectManager,
 ): TObProxyContainer => {
   const initialValue = getFromPath(path, state);
   const ob = observable(initialValue, config.utils);
@@ -75,7 +75,7 @@ const applyEffects = (
   next: unknown,
   previous: unknown,
   config: TStoreConfig,
-  effects: TExtendedEffectManager
+  effects: TExtendedEffectManager,
 ) => {
   const { utils } = config;
   const effectList = effects.list();
@@ -93,7 +93,7 @@ const applyEffects = (
       return acc;
     },
 
-    next
+    next,
   );
 };
 
@@ -114,7 +114,7 @@ export const log = ({
   console.groupCollapsed(
     `${baseMsg}( %c${path}`,
     'font-weight: 400; color: #cccc00;',
-    ')'
+    ')',
   );
   console.table({
     previous: {
