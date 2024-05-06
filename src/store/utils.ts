@@ -1,6 +1,7 @@
 import { deletePath, getFromPath, setAtPath } from '@/utils/path';
 import { observable, type TObservable } from '@/observable';
 import type { TObProxyContainer, TState, TStoreConfig } from './types';
+import { isNotNullable } from '@/utils/nullable';
 
 export const setupObservable = (
   path: string,
@@ -84,11 +85,11 @@ const applyEffects = (
     (acc, effect) => {
       const result = effect(path, utils.clone(acc), utils.clone(previous));
 
-      if (result === undefined) {
-        return acc;
+      if (isNotNullable(result) && 'next' in result) {
+        return result.next;
       }
 
-      return result.next;
+      return acc;
     },
 
     next
