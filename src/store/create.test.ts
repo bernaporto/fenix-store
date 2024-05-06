@@ -127,10 +127,10 @@ describe('Store', () => {
 
   describe('effects', () => {
     it('should apply the effects to the observable', () => {
+      const store = FenixStore.create();
+
       const effect = jest.fn();
-      const store = FenixStore.create(undefined, {
-        effects: [effect],
-      });
+      store.effects.use(effect);
 
       const observable = store.on('key');
 
@@ -140,10 +140,10 @@ describe('Store', () => {
     });
 
     it('should apply effects return value to the observable', () => {
+      const store = FenixStore.create();
+
       const effect = jest.fn((_, value) => ({ next: value + 1 }));
-      const store = FenixStore.create(undefined, {
-        effects: [effect],
-      });
+      store.effects.use(effect);
 
       const observable = store.on('key');
 
@@ -153,11 +153,13 @@ describe('Store', () => {
     });
 
     it('should apply effects in order', () => {
+      const store = FenixStore.create();
+
       const effect1 = jest.fn((_, value) => ({ next: value + 1 }));
+      store.effects.use(effect1);
+
       const effect2 = jest.fn((_, value) => ({ next: value.toFixed(2) }));
-      const store = FenixStore.create(undefined, {
-        effects: [effect1, effect2],
-      });
+      store.effects.use(effect2);
 
       const observable = store.on('key');
 
@@ -171,10 +173,10 @@ describe('Store', () => {
     });
 
     it('should consider an undefined value as a valid result', () => {
+      const store = FenixStore.create();
+
       const effect = jest.fn(() => ({ next: undefined }));
-      const store = FenixStore.create(undefined, {
-        effects: [effect],
-      });
+      store.effects.use(effect);
 
       const observable = store.on('key');
 

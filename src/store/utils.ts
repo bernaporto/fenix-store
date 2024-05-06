@@ -1,13 +1,19 @@
 import { deletePath, getFromPath, setAtPath } from '@/utils/path';
 import { observable, type TObservable } from '@/observable';
-import type { TObProxyContainer, TState, TStoreConfig } from './types';
+import type {
+  TExtendedEffectManager,
+  TObProxyContainer,
+  TState,
+  TStoreConfig,
+} from './types';
 import { isNotNullable } from '@/utils/nullable';
 
 export const setupObservable = (
   path: string,
   state: TState,
   obMap: Map<string, TObProxyContainer>,
-  config: TStoreConfig
+  config: TStoreConfig,
+  effects: TExtendedEffectManager
 ): TObProxyContainer => {
   const initialValue = getFromPath(path, state);
   const ob = observable(initialValue, config.utils);
@@ -20,7 +26,7 @@ export const setupObservable = (
 
   return {
     original: ob,
-    proxy: toStoreOb(ob, path, state, obMap, config),
+    proxy: toStoreOb(ob, path, state, obMap, config, effects),
   };
 };
 
@@ -29,7 +35,8 @@ const toStoreOb = (
   path: string,
   state: TState,
   obMap: Map<string, TObProxyContainer>,
-  config: TStoreConfig
+  config: TStoreConfig,
+  effects: TExtendedEffectManager
 ) => {
   const { debug, debugKey, utils } = config;
 
@@ -42,7 +49,7 @@ const toStoreOb = (
 
     set: (value: unknown, logKey = 'set') => {
       const previous = ob.get();
-      const next = applyEffects(path, value, previous, config);
+      const next = applyEffects(path, value, previous, config, effects);
       ob.set(next);
 
       if (next === undefined) {
@@ -75,13 +82,15 @@ const applyEffects = (
   path: string,
   next: unknown,
   previous: unknown,
-  config: TStoreConfig
+  config: TStoreConfig,
+  effects: TExtendedEffectManager
 ) => {
-  const { effects, utils } = config;
+  const { utils } = config;
+  const effectList = effects.list();
 
-  if (effects.length === 0) return next;
+  if (effectList.length === 0) return next;
 
-  return effects.reduce<unknown>(
+  return effectList.reduce<unknown>(
     (acc, effect) => {
       const result = effect(path, utils.clone(acc), utils.clone(previous));
 

@@ -1,6 +1,16 @@
 import type { TObservable } from '@/observable';
 import type { TUtils } from '@/utils/types';
 
+type TEffectManager = {
+  use: (effect: TStoreEffect) => void;
+};
+
+export type TExtendedEffectManager = TEffectManager & {
+  list: () => TStoreEffect[];
+} & {
+  clear: VoidFunction;
+};
+
 export type TState = Record<string, unknown>;
 export type TStoreEffect = (
   path: string,
@@ -13,12 +23,12 @@ export type TStore<State extends TState> = {
   get: () => State;
 } & {
   clear: VoidFunction;
+  effects: TEffectManager;
   reset: VoidFunction;
 };
 
 export type TStoreConfig = {
   debug: boolean;
-  effects: TStoreEffect[];
   utils: TUtils;
   debugKey?: string;
 };
