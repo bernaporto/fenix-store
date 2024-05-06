@@ -79,10 +79,11 @@ store
   .effects
   .use(
     // Return an object with the 'next' property to change the value, otherwise no changes will be applied.
-    (path, next) => (
-      path === 'user.name' &&
-      ({ next: `Hello, ${next}` })
-    ),
+    (path, next) => {
+      if (path !== 'user.name') return;
+
+      return { next: `Hello, ${next}` };
+    },
   )
 
 store

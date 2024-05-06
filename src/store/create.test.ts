@@ -80,13 +80,30 @@ describe('Store', () => {
   describe('on', () => {
     it('should return an observable', () => {
       const store = FenixStore.create();
-      const observable = store.on('key');
+      const observable = store.on<number>('key');
 
       expect(observable).toBeDefined();
       expect(observable).toHaveProperty('get');
       expect(observable).toHaveProperty('set');
       expect(observable).toHaveProperty('subscribe');
       expect(observable).toHaveProperty('update');
+
+      const observer = jest.fn();
+      const unsubscribe = observable.subscribe(observer);
+
+      observable.set(1);
+      expect(observable.get()).toBe(1);
+
+      observable.update((value) => value + 1);
+      expect(observable.get()).toBe(2);
+
+      expect(observer).toHaveBeenCalledTimes(2);
+      unsubscribe();
+
+      observable.reset();
+      expect(observable.get()).toBeUndefined();
+
+      expect(observer).toHaveBeenCalledTimes(2);
     });
   });
 
