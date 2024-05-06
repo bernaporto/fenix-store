@@ -1,8 +1,8 @@
-import { Store } from '@/store';
+import { FenixStore } from '@/store';
 
 describe('Store', () => {
   it('should notify the affected observable', () => {
-    const store = Store.create();
+    const store = FenixStore.create();
     const observable = store.on('key');
 
     const observer = jest.fn();
@@ -16,7 +16,7 @@ describe('Store', () => {
   });
 
   it('should notify all affected parent paths', () => {
-    const store = Store.create({
+    const store = FenixStore.create({
       key1: {
         key2: 0,
       },
@@ -39,7 +39,7 @@ describe('Store', () => {
   });
 
   it('should notify all affected child paths', () => {
-    const store = Store.create({
+    const store = FenixStore.create({
       key1: {
         key2: 0,
       },
@@ -63,7 +63,7 @@ describe('Store', () => {
 
   describe('dispose', () => {
     it('should clear all observables', () => {
-      const store = Store.create();
+      const store = FenixStore.create();
       const observable = store.on('key');
 
       const observer = jest.fn();
@@ -79,7 +79,7 @@ describe('Store', () => {
 
   describe('on', () => {
     it('should return an observable', () => {
-      const store = Store.create();
+      const store = FenixStore.create();
       const observable = store.on('key');
 
       expect(observable).toBeDefined();
@@ -92,7 +92,7 @@ describe('Store', () => {
 
   describe('get', () => {
     it('should return the current state', () => {
-      const store = Store.create();
+      const store = FenixStore.create();
 
       expect(store.get()).toEqual({});
 
@@ -104,7 +104,7 @@ describe('Store', () => {
 
   describe('reset', () => {
     it('should reset the state to its initial value', () => {
-      const store = Store.create({
+      const store = FenixStore.create({
         key1: 0,
         key2: {
           key3: 0,
@@ -128,7 +128,7 @@ describe('Store', () => {
   describe('effects', () => {
     it('should apply the effects to the observable', () => {
       const effect = jest.fn();
-      const store = Store.create(undefined, {
+      const store = FenixStore.create(undefined, {
         effects: [effect],
       });
 
@@ -141,7 +141,7 @@ describe('Store', () => {
 
     it('should apply effects return value to the observable', () => {
       const effect = jest.fn((_, value) => ({ next: value + 1 }));
-      const store = Store.create(undefined, {
+      const store = FenixStore.create(undefined, {
         effects: [effect],
       });
 
@@ -155,7 +155,7 @@ describe('Store', () => {
     it('should apply effects in order', () => {
       const effect1 = jest.fn((_, value) => ({ next: value + 1 }));
       const effect2 = jest.fn((_, value) => ({ next: value.toFixed(2) }));
-      const store = Store.create(undefined, {
+      const store = FenixStore.create(undefined, {
         effects: [effect1, effect2],
       });
 
@@ -172,7 +172,7 @@ describe('Store', () => {
 
     it('should consider an undefined value as a valid result', () => {
       const effect = jest.fn(() => ({ next: undefined }));
-      const store = Store.create(undefined, {
+      const store = FenixStore.create(undefined, {
         effects: [effect],
       });
 
@@ -195,7 +195,7 @@ describe('Store', () => {
     });
 
     it('should log the changes', () => {
-      const store = Store.create(undefined, {
+      const store = FenixStore.create(undefined, {
         debug: true,
         debugKey: 'Store Test',
       });

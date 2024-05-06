@@ -1,5 +1,5 @@
 import { create } from './create';
 
-const Store = { create };
+const FenixStore = { create };
 
-export { Store };
+export { FenixStore };

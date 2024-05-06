@@ -1,1 +1,3 @@
-export { Store } from './store';
+import { FenixStore } from './store';
+
+export default FenixStore;
