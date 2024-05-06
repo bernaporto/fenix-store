@@ -8,13 +8,8 @@ export type TStoreEffect = (
   previous?: unknown
 ) => { next: unknown } | void;
 
-export type TStoreObservable<T> = Pick<
-  TObservable<T>,
-  'get' | 'reset' | 'set' | 'subscribe' | 'update'
->;
-
 export type TStore<State extends TState> = {
-  for: <T>(path: string) => TStoreObservable<T>;
+  for: <T>(path: string) => TObservable<T>;
   get: () => State;
 } & {
   clear: VoidFunction;
@@ -30,5 +25,5 @@ export type TStoreConfig = {
 
 export type TObProxyContainer = {
   original: TObservable<unknown>;
-  proxy: TStoreObservable<unknown>;
+  proxy: TObservable<unknown>;
 };

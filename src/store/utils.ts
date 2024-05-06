@@ -34,6 +34,7 @@ const toStoreOb = (
 
   return {
     get: ob.get,
+    observers: ob.observers,
     reset: ob.reset,
     subscribe: ob.subscribe,
     update: ob.update,
