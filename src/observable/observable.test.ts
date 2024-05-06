@@ -22,21 +22,6 @@ describe('observable', () => {
     expect(ob.get()).toBe(undefined);
   });
 
-  describe('dispose', () => {
-    it('should clear all observers', () => {
-      const ob = observable(1);
-
-      const observer = jest.fn();
-
-      ob.subscribe(observer);
-      ob.clear();
-
-      ob.set(2);
-
-      expect(observer).not.toHaveBeenCalled();
-    });
-  });
-
   describe('get', () => {
     it('should return the current value', () => {
       const ob = observable(1);
@@ -145,6 +130,41 @@ describe('observable', () => {
         ob.subscribe(observer2);
 
         expect(ob.observers.count).toBe(2);
+      });
+    });
+
+    describe('clear', () => {
+      it('should clear all observers', () => {
+        const ob = observable(1);
+
+        const observer = jest.fn();
+
+        ob.subscribe(observer);
+        ob.observers.clear();
+
+        ob.set(2);
+
+        expect(observer).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('remove', () => {
+      it('should remove a specific observer', () => {
+        const ob = observable(1);
+
+        const observer1 = jest.fn();
+        const observer2 = jest.fn();
+
+        ob.subscribe(observer1);
+        ob.subscribe(observer2);
+
+        ob.observers.remove(observer1);
+
+        ob.set(2);
+
+        expect(ob.observers.count).toBe(1);
+        expect(observer1).not.toHaveBeenCalled();
+        expect(observer2).toHaveBeenCalled();
       });
     });
   });

@@ -13,10 +13,6 @@ export const observable = <T = unknown>(
   let value = _utils.clone(initialValue);
 
   const self: TObservable<T> = {
-    clear: () => {
-      observers.clear();
-    },
-
     get: () => _utils.clone(value) as T,
 
     reset: () => {
@@ -54,6 +50,14 @@ export const observable = <T = unknown>(
     observers: {
       get count() {
         return observers.size;
+      },
+
+      clear: () => {
+        observers.clear();
+      },
+
+      remove: (observer) => {
+        observers.delete(observer);
       },
     },
   };
