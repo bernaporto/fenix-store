@@ -1,5 +1,6 @@
 import { FenixStore } from './store';
 
+/* README EXAMPLES */
 describe('FenixStore', () => {
   it('should handle state changes', () => {
     const store = FenixStore.create();
