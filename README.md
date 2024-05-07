@@ -28,7 +28,7 @@ or with yarn:
 ## Examples
 
 ```javascript
-import FenixStore from 'fenix-store';
+import { FenixStore } from 'fenix-store';
 
 const store = FenixStore.create();
 console.log(store.get());

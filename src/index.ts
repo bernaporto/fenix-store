@@ -1,3 +1,4 @@
-import { FenixStore } from './store';
+import { TStore, TState } from './store';
 
-export default FenixStore;
+export type FenixStore<T extends TState> = TStore<T>;
+export { FenixStore } from './store';
