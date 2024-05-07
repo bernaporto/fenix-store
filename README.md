@@ -4,7 +4,7 @@ A simple and powerful state management library for JavaScript applications. It p
 
 ### Why?
 
-After some years dealing with other complex solutions I decided to create this library with a centralized API with the following principles:
+After some years dealing with other complex solutions I decided to create this library with the following principles:
 
 - **Reactive**: It allows you to subscribe to changes in the state of your application.
 - **Simple**: It's designed to be simple and easy to use.
