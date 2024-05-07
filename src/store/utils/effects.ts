@@ -16,7 +16,7 @@ export const getEffectManager = (): TExtendedEffectManager => {
     list: () => Array.from(effects),
 
     use: (effect) => {
-      effects.add(effect);
+      effects.add(effect as TStoreEffect<unknown>);
     },
   };
 };

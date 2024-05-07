@@ -3,7 +3,7 @@ import type { TUtils } from '@/utils/types';
 
 /* STORE */
 type TEffectManager = {
-  use: (effect: TStoreEffect) => void;
+  use: <T = unknown>(effect: TStoreEffect<T>) => void;
 };
 
 export type TExtendedEffectManager = TEffectManager & {
@@ -13,10 +13,10 @@ export type TExtendedEffectManager = TEffectManager & {
 };
 
 export type TState = Record<string, unknown>;
-export type TStoreEffect = (
+export type TStoreEffect<T = unknown> = (
   path: string,
-  value: unknown,
-  previous?: unknown,
+  value: T,
+  previous?: T,
 ) => { next: unknown } | void;
 
 export type TStore<State extends TState> = {
