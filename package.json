@@ -13,6 +13,7 @@
     "test": "jest --coverage",
     "lint": "eslint ./src",
     "format": "prettier ./src --write",
+    "prebuild": "yarn lint && yarn test",
     "build": "vite build && tsc",
     "prepare": "husky"
   },
