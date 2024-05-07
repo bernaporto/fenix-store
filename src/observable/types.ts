@@ -1,5 +1,7 @@
+import { TUtils } from '@/utils/types';
+
 export type TObserver<T> = (value: Readonly<T>, previous?: Readonly<T>) => void;
-type TUpdater<T> = (value: Readonly<T>) => T;
+export type TUpdater<T> = (value: Readonly<T>) => T;
 
 type TObserverHandler = {
   count: number;
@@ -19,4 +21,20 @@ export type TObservable<T = unknown> = {
 } & {
   reset: VoidFunction;
   observers: TObserverHandler;
+};
+
+type TLogConfig = {
+  key: string;
+  observers: number;
+  next: unknown;
+  previous: unknown;
+};
+
+export type TObservableConfig<T> = {
+  utils: TUtils;
+  initialValue?: T;
+} & {
+  afterChange: (next: T, previous?: T) => void;
+  beforeChange: (next: T, previous?: T) => T;
+  log: (config: TLogConfig) => void;
 };

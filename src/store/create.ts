@@ -1,35 +1,21 @@
-import { clone } from '@/utils/clone';
-import { equals } from '@/utils/equals';
-import { merge } from '@/utils/merge';
 import type { TObservable } from '@/observable';
-import type { TUtils } from '@/utils/types';
-import type { TObProxyContainer, TState, TStore, TStoreConfig } from './types';
-import { getEffectManager } from './effects';
-import { setupObservable } from './utils';
+import { ensureConfig, getEffectManager, setupObservable } from './utils';
+import type { TOptionalStoreConfig, TState, TStore } from './types';
 
-type TOptionalStoreConfig = Omit<Partial<TStoreConfig>, 'utils'> & {
-  utils?: Partial<TUtils>;
-};
-
-const defaultConfig: TStoreConfig = {
-  utils: { clone, equals },
-  debug: false,
-};
-
-const create = <State extends TState = TState>(
+export const create = <State extends TState = TState>(
   initialValue: State = Object.create(null),
   config?: TOptionalStoreConfig,
 ): TStore<State> => {
   const effects = getEffectManager();
-  const obMap = new Map<string, TObProxyContainer>();
+  const obMap = new Map<string, TObservable<unknown>>();
 
-  const _config = merge<TStoreConfig>(defaultConfig, config);
+  const _config = ensureConfig(config);
   const state = _config.utils.clone(initialValue);
 
   return {
     clear: () => {
       obMap.forEach((ob) => {
-        ob.proxy.observers.clear();
+        ob.observers.clear();
       });
 
       effects.clear();
@@ -37,15 +23,15 @@ const create = <State extends TState = TState>(
     },
 
     on: <T>(path: string) => {
-      let container = obMap.get(path);
+      let ob = obMap.get(path);
 
-      if (!container) {
-        container = setupObservable(path, state, obMap, _config, effects);
+      if (!ob) {
+        ob = setupObservable(path, state, obMap, _config, effects);
 
-        obMap.set(path, container);
+        obMap.set(path, ob);
       }
 
-      return container.proxy as TObservable<T>;
+      return ob as TObservable<T>;
     },
 
     get: () => {
@@ -54,7 +40,7 @@ const create = <State extends TState = TState>(
 
     reset: () => {
       obMap.forEach((ob) => {
-        ob.proxy.reset();
+        ob.reset();
       });
     },
 
@@ -63,5 +49,3 @@ const create = <State extends TState = TState>(
     },
   };
 };
-
-export { create };

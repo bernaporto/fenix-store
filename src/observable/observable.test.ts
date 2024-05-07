@@ -1,14 +1,32 @@
+import { clone } from '@/utils/clone';
+import { equals } from '@/utils/equals';
+
 import { observable } from './observable';
+import { TObservableConfig } from './types';
+
+const noop = () => {
+  /* noop */
+};
+const config = <T>(initialValue?: T): TObservableConfig<T> => ({
+  initialValue,
+  beforeChange: (next) => next,
+  afterChange: noop,
+  log: noop,
+  utils: {
+    clone,
+    equals,
+  },
+});
 
 describe('observable', () => {
   it('should be defined', () => {
-    const ob = observable();
+    const ob = observable(config());
 
     expect(ob).toBeDefined();
   });
 
   it('should return an object with get, set, subscribe and update methods', () => {
-    const ob = observable();
+    const ob = observable(config());
 
     expect(ob).toHaveProperty('get');
     expect(ob).toHaveProperty('set');
@@ -17,14 +35,14 @@ describe('observable', () => {
   });
 
   it('should have initial value as undefined by default', () => {
-    const ob = observable();
+    const ob = observable(config());
 
     expect(ob.get()).toBe(undefined);
   });
 
   describe('get', () => {
     it('should return the current value', () => {
-      const ob = observable(1);
+      const ob = observable(config(1));
 
       expect(ob.get()).toBe(1);
 
@@ -36,7 +54,7 @@ describe('observable', () => {
 
   describe('reset', () => {
     it('should reset the state to the initial value', () => {
-      const ob = observable(1);
+      const ob = observable(config(1));
 
       ob.set(2);
       expect(ob.get()).toBe(2);
@@ -48,7 +66,7 @@ describe('observable', () => {
 
   describe('set', () => {
     it('should set a new value', () => {
-      const ob = observable(1);
+      const ob = observable(config(1));
 
       ob.set(2);
 
@@ -56,7 +74,7 @@ describe('observable', () => {
     });
 
     it('should notify subscribers', () => {
-      const ob = observable(1);
+      const ob = observable(config(1));
 
       const observer = jest.fn();
 
@@ -68,7 +86,7 @@ describe('observable', () => {
     });
 
     it('should not notify subscribers if the value is the same', () => {
-      const ob = observable(1);
+      const ob = observable(config(1));
 
       const observer = jest.fn();
 
@@ -82,7 +100,7 @@ describe('observable', () => {
 
   describe('subscribe', () => {
     it('should return a function to unsubscribe', () => {
-      const ob = observable(1);
+      const ob = observable(config(1));
 
       const observer = jest.fn();
 
@@ -98,7 +116,7 @@ describe('observable', () => {
     });
 
     it('should notify immediately with second parameter as true', () => {
-      const ob = observable(1);
+      const ob = observable(config(1));
 
       const observer = jest.fn();
 
@@ -110,7 +128,7 @@ describe('observable', () => {
 
   describe('update', () => {
     it('should update the value with an updater function', () => {
-      const ob = observable(1);
+      const ob = observable(config(1));
 
       ob.update((value) => value + 1);
 
@@ -121,7 +139,7 @@ describe('observable', () => {
   describe('observers', () => {
     describe('count', () => {
       it('should return the number of observers', () => {
-        const ob = observable(1);
+        const ob = observable(config(1));
 
         const observer1 = jest.fn();
         const observer2 = jest.fn();
@@ -135,7 +153,7 @@ describe('observable', () => {
 
     describe('clear', () => {
       it('should clear all observers', () => {
-        const ob = observable(1);
+        const ob = observable(config(1));
 
         const observer = jest.fn();
 
@@ -150,7 +168,7 @@ describe('observable', () => {
 
     describe('remove', () => {
       it('should remove a specific observer', () => {
-        const ob = observable(1);
+        const ob = observable(config(1));
 
         const observer1 = jest.fn();
         const observer2 = jest.fn();

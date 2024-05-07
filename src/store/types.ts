@@ -1,6 +1,7 @@
 import type { TObservable } from '@/observable';
 import type { TUtils } from '@/utils/types';
 
+/* STORE */
 type TEffectManager = {
   use: (effect: TStoreEffect) => void;
 };
@@ -33,7 +34,6 @@ export type TStoreConfig = {
   debugKey?: string;
 };
 
-export type TObProxyContainer = {
-  original: TObservable<unknown>;
-  proxy: TObservable<unknown>;
+export type TOptionalStoreConfig = Omit<Partial<TStoreConfig>, 'utils'> & {
+  utils?: Partial<TUtils>;
 };

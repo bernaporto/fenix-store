@@ -1,36 +1,21 @@
-import type { TObservable, TObserver } from './types';
-import { clone } from '@/utils/clone';
-import { equals } from '@/utils/equals';
-import { merge } from '@/utils/merge';
-import type { TUtils } from '@/utils/types';
+import type {
+  TObservable,
+  TObservableConfig,
+  TObserver,
+  TUpdater,
+} from './types';
 
-export const observable = <T = unknown>(
-  initialValue?: T,
-  utils: Partial<TUtils> = {},
-): TObservable<T> => {
+export const observable = <T>(config: TObservableConfig<T>): TObservable<T> => {
+  const { afterChange, beforeChange, log, utils } = config;
   const observers = new Set<TObserver<T>>();
-  const _utils = merge<TUtils>({ clone, equals }, utils);
-  let value = _utils.clone(initialValue);
 
-  const self: TObservable<T> = {
-    get: () => _utils.clone(value) as T,
+  const initialValue = utils.clone(config.initialValue as T);
+  let value = utils.clone(initialValue);
 
-    reset: () => {
-      self.set(initialValue as T);
-    },
+  const self = {
+    get: () => utils.clone(value),
 
-    set: (next) => {
-      if (_utils.equals(value, next)) return;
-
-      const previous = self.get();
-      value = _utils.clone(next);
-
-      observers.forEach((observer) => {
-        observer(_utils.clone(next), previous);
-      });
-    },
-
-    subscribe: (observer, notifyImmediately = false) => {
+    subscribe: (observer: TObserver<T>, notifyImmediately = false) => {
       observers.add(observer);
 
       if (notifyImmediately) {
@@ -42,9 +27,40 @@ export const observable = <T = unknown>(
       };
     },
 
-    update: (updater) => {
+    update: (updater: TUpdater<T>) => {
       const next = updater(self.get());
-      self.set(next);
+      self.set(next, 'update');
+    },
+
+    reset: () => {
+      self.set(initialValue, 'reset');
+    },
+
+    set: (next: T, __internal__logkey__ = 'set') => {
+      /* 1. Verify equality */
+      if (utils.equals(value, next)) return;
+
+      /* 2. Apply effects */
+      const previous = self.get();
+      const _next = beforeChange(next, previous);
+
+      /* 3. Save new value */
+      value = utils.clone(_next);
+
+      /* 4. Notify observers & others */
+      observers.forEach((observer) => {
+        observer(utils.clone(_next), previous);
+      });
+
+      afterChange(_next, previous);
+
+      /* 5. Log */
+      log({
+        key: __internal__logkey__,
+        observers: observers.size,
+        next: _next,
+        previous: previous,
+      });
     },
 
     observers: {
@@ -56,7 +72,7 @@ export const observable = <T = unknown>(
         observers.clear();
       },
 
-      remove: (observer) => {
+      remove: (observer: TObserver<T>) => {
         observers.delete(observer);
       },
     },
