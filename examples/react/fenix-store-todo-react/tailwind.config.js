@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-import config from '../../tailwind.config';
+import { theme } from '../../tailwind.config';
 
 export default {
+  theme,
   content: ['./src/**/*.{ts,tsx}', './*.html'],
-  theme: config.theme,
 };

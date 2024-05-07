@@ -7,7 +7,6 @@ export default {
         white: '#ffffff',
         black: '#000000',
         primary: {
-          50: '#fff6ec',
           100: '#ffebd2',
           200: '#ffd3a4',
           300: '#ffb46b',
@@ -17,10 +16,8 @@ export default {
           700: '#e03800',
           800: '#a32a09',
           900: '#83250b',
-          950: '#470f03',
         },
         gray: {
-          50: '#fafafa',
           100: '#f4f4f4',
           200: '#e0e0e0',
           300: '#c6c6c6',
@@ -29,7 +26,6 @@ export default {
           600: '#6f6f6f',
           700: '#525252',
           800: '#393939',
-          850: '#2d2d2d',
           900: '#262626',
         },
         danger: {
