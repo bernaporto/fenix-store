@@ -1,7 +1,16 @@
+import { Container } from './lib/Container';
+import { Header } from './components/Header';
+import { Input } from './lib/Input';
+import { TodoList } from './components/TodoList';
+
 function App() {
   return (
-    <main className="dark:bg-gray-800 dark">
-      <h1>Vite + React</h1>
+    <main className="w-full h-full dark:bg-gray-800 dark">
+      <Container>
+        <Header />
+        <Input />
+        <TodoList />
+      </Container>
     </main>
   );
 }
