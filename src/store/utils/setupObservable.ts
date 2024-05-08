@@ -39,7 +39,7 @@ export const setupObservable = (
       Array.from(obMap.keys())
         .filter((p) => p !== path && (path.startsWith(p) || p.startsWith(path)))
         .forEach((p) => {
-          obMap.get(p)?.set(getFromPath(p, state));
+          obMap.get(p)?.set(getFromPath(p, state), { skipEvents: true });
         });
     },
 

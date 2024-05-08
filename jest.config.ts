@@ -1,5 +1,3 @@
-// const { pathsToModuleNameMapper } = require('ts-jest');
-// const { compilerOptions } = require('./tsconfig.json');
 import { pathsToModuleNameMapper } from 'ts-jest';
 import { compilerOptions } from './tsconfig.json';
 

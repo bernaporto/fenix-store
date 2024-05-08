@@ -61,13 +61,6 @@ unsubscribe();
 store
   .on('user.name')
   .set('Jane Doe'); // nothing
-
-/* Or:
-  store
-    .on('user.name')
-    .observers
-    .remove(console.log);
-*/
 ```
 
 #### Side Effects / Middleware

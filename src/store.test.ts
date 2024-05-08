@@ -18,11 +18,9 @@ describe('FenixStore', () => {
 
     const observer1 = jest.fn();
     const unsubscribe = store.on('user.name').subscribe(observer1);
-    expect(store.on('user.name').observers.count).toBe(1);
 
     const observer2 = jest.fn();
     store.on('user.name').subscribe(observer2);
-    expect(store.on('user.name').observers.count).toBe(2);
 
     store.on('user.name').set('John Doe');
     expect(observer1).toHaveBeenLastCalledWith('John Doe', undefined);
@@ -32,15 +30,6 @@ describe('FenixStore', () => {
     store.on('user.name').set('Jane Doe');
     expect(observer1).toHaveBeenCalledTimes(1);
     expect(observer1).toHaveBeenLastCalledWith('John Doe', undefined);
-
-    expect(observer2).toHaveBeenCalledTimes(2);
-    expect(observer2).toHaveBeenLastCalledWith('Jane Doe', 'John Doe');
-
-    store.on('user.name').observers.remove(observer2);
-    store.on('user.name').set('John Doe');
-
-    expect(observer2).toHaveBeenCalledTimes(2);
-    expect(store.on('user.name').observers.count).toBe(0);
   });
 
   it('should apply effects (1)', () => {

@@ -1,5 +1,10 @@
 import type { TObservable } from '@/observable';
-import { ensureConfig, getEffectManager, setupObservable } from './utils';
+import {
+  ensureConfig,
+  getEffectManager,
+  setupObservable,
+  toStoreObservable,
+} from './utils';
 import type { TOptionalStoreConfig, TState, TStore } from './types';
 
 export const create = <State extends TState = TState>(
@@ -31,7 +36,7 @@ export const create = <State extends TState = TState>(
         obMap.set(path, ob);
       }
 
-      return ob as TObservable<T>;
+      return toStoreObservable(ob as TObservable<T>);
     },
 
     get: () => {

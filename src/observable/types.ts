@@ -10,9 +10,14 @@ type TObserverHandler = {
   remove: (observer: TObserver<unknown>) => void;
 };
 
+type TSetOptions = {
+  logKey?: string;
+  skipEvents?: boolean;
+};
+
 export type TObservable<T = unknown> = {
   get: () => Readonly<T>;
-  set: (value: T) => void;
+  set: (value: T, options?: TSetOptions) => void;
   subscribe: (
     observer: TObserver<T>,
     notifyImmediately?: boolean,

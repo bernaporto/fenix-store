@@ -19,8 +19,15 @@ export type TStoreEffect<T = unknown> = (
   previous?: T,
 ) => { next: unknown } | void;
 
+export type TStoreObservable<T> = Pick<
+  TObservable<T>,
+  'get' | 'reset' | 'subscribe' | 'update'
+> & {
+  set: (value: T) => void;
+};
+
 export type TStore<State extends TState> = {
-  on: <T>(path: string) => TObservable<T>;
+  on: <T>(path: string) => TStoreObservable<T>;
   get: () => State;
 } & {
   clear: VoidFunction;

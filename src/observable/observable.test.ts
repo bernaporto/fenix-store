@@ -1,6 +1,5 @@
-import { clone } from '@/utils/clone';
-import { equals } from '@/utils/equals';
-
+import { clone } from '../utils/clone';
+import { equals } from '../utils/equals';
 import { observable } from './observable';
 import { TObservableConfig } from './types';
 
