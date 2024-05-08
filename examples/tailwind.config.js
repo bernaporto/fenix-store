@@ -40,8 +40,11 @@ export default {
           900: '#740909',
         },
       },
-      fontSize: {
-        '2xs': '.625rem', // 10px
+      width: {
+        13: '3.25rem', // 52px
+      },
+      height: {
+        13: '3.25rem', // 52px
       },
     },
   },

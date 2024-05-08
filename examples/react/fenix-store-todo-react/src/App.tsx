@@ -1,15 +1,25 @@
+import { classNames } from './utils/classNames';
 import { Container } from './lib/Container';
 import { Header } from './components/Header';
-import { Input } from './lib/Input';
-import { TodoList } from './components/TodoList';
+import { TaskInput } from './components/TaskInput';
+import { TaskList } from './components/TaskList';
 
 function App() {
   return (
-    <main className="w-full h-full dark:bg-gray-800 dark">
+    <main
+      className={classNames(
+        'w-full h-full',
+        'bg-gray-100 dark:bg-gray-900',
+        'text-gray-700 dark:text-gray-300',
+        {
+          dark: true,
+        },
+      )}
+    >
       <Container>
         <Header />
-        <Input />
-        <TodoList />
+        <TaskInput />
+        <TaskList />
       </Container>
     </main>
   );
