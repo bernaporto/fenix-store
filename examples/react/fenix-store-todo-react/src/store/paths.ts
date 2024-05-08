@@ -1,4 +1,5 @@
 export const StorePath = Object.freeze({
-  TODOS: 'todos.items',
-  TODO_IDS: 'todos.ids',
+  TASK: (id: string) => `tasks.items.${id}`,
+  TASKS: 'tasks.items',
+  TASK_IDS: 'tasks.ids',
 });

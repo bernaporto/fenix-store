@@ -1,11 +1,8 @@
-export type TAppState = {
-  todos: {
-    ids: string[];
-    items: Record<string, TTodoItem>;
-  };
-};
+import { TTaskItem } from '../types';
 
-export type TTodoItem = {
-  id: string;
-  label: string;
+export type TAppState = {
+  tasks: {
+    ids: string[];
+    items: Record<string, TTaskItem>;
+  };
 };

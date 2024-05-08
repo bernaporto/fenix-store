@@ -1,10 +1,12 @@
+import { useTaskList } from '../hooks/useTaskList';
 import { TaskItem } from './TaskItem';
 
 export const TaskList: React.FC = () => {
+  const tasks = useTaskList();
   return (
     <section className="flex-1 flex flex-col gap-4 overflow-y-auto">
-      {['task 1', 'task 2', 'task 3'].map((task, index) => (
-        <TaskItem key={index} label={task} />
+      {tasks.ids.map((taskId) => (
+        <TaskItem key={taskId} id={taskId} />
       ))}
     </section>
   );
