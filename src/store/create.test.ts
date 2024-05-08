@@ -73,7 +73,7 @@ describe('Store', () => {
 
       observable.set(1);
 
-      expect(observer).not.toHaveBeenCalled();
+      expect(observer).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -97,13 +97,13 @@ describe('Store', () => {
       observable.update((value) => value + 1);
       expect(observable.get()).toBe(2);
 
-      expect(observer).toHaveBeenCalledTimes(2);
+      expect(observer).toHaveBeenCalledTimes(3);
       unsubscribe();
 
       observable.reset();
       expect(observable.get()).toBeUndefined();
 
-      expect(observer).toHaveBeenCalledTimes(2);
+      expect(observer).toHaveBeenCalledTimes(3);
     });
   });
 

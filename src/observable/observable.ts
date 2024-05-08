@@ -15,7 +15,7 @@ export const observable = <T>(config: TObservableConfig<T>): TObservable<T> => {
   const self: TObservable<T> = {
     get: () => utils.clone(value),
 
-    subscribe: (observer: TObserver<T>, notifyImmediately = false) => {
+    subscribe: (observer: TObserver<T>, notifyImmediately = true) => {
       observers.add(observer);
       if (notifyImmediately) {
         observer(self.get());

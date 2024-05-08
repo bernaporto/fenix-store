@@ -93,7 +93,7 @@ describe('observable', () => {
 
       ob.set(1);
 
-      expect(observer).not.toHaveBeenCalled();
+      expect(observer).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -111,7 +111,7 @@ describe('observable', () => {
 
       ob.set(3);
 
-      expect(observer).toHaveBeenCalledTimes(1);
+      expect(observer).toHaveBeenCalledTimes(2);
     });
 
     it('should notify immediately with second parameter as true', () => {
@@ -161,7 +161,7 @@ describe('observable', () => {
 
         ob.set(2);
 
-        expect(observer).not.toHaveBeenCalled();
+        expect(observer).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -180,8 +180,8 @@ describe('observable', () => {
         ob.set(2);
 
         expect(ob.observers.count).toBe(1);
-        expect(observer1).not.toHaveBeenCalled();
-        expect(observer2).toHaveBeenCalled();
+        expect(observer1).toHaveBeenCalledTimes(1);
+        expect(observer2).toHaveBeenCalledTimes(2);
       });
     });
   });

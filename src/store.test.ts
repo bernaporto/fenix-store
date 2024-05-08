@@ -28,7 +28,7 @@ describe('FenixStore', () => {
     unsubscribe();
 
     store.on('user.name').set('Jane Doe');
-    expect(observer1).toHaveBeenCalledTimes(1);
+    expect(observer1).toHaveBeenCalledTimes(2);
     expect(observer1).toHaveBeenLastCalledWith('John Doe', undefined);
   });
 
