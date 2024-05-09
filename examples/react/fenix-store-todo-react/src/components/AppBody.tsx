@@ -6,7 +6,7 @@ import { TaskListHeader } from './TaskListHeader';
 export const AppBody: React.FC = () => {
   return (
     <main className={classNames('w-full flex-1 overflow-y-auto')}>
-      <section className="max-w-lg h-full m-auto p-8 flex flex-col gap-8">
+      <section className="max-w-md h-full m-auto flex flex-col gap-6">
         <TaskListHeader />
         <TaskInput />
         <TaskList />

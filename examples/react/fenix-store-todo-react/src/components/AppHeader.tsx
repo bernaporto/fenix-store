@@ -5,7 +5,7 @@ export const AppHeader: React.FC = () => {
   const { darkMode, toggleDarkMode } = useDarkMode();
 
   return (
-    <header className="w-full px-4 py-2 flex items-center">
+    <header className="w-full p-4 mb-2 flex items-center">
       <p className="flex-1 text-sm text-gray-500">
         Fenix Store Example - Todo App (React)
       </p>

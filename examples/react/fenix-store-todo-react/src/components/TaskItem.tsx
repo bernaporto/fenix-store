@@ -26,9 +26,10 @@ const Label: React.FC<TTaskItemProps> = ({ id }) => {
 
   return (
     <article
-      className={classNames('capitalize flex-1', {
+      className={classNames('capitalize truncate flex-1', {
         'line-through opacity-50': completed,
       })}
+      title={label}
     >
       {label}
     </article>
