@@ -15,8 +15,8 @@ const addTask = (label: string) => {
   const id = Date.now().toString();
 
   store.on<TTaskItem>(StorePath.TASK(id)).set({
-    completed: false,
-    id: Date.now().toString(),
+    id,
     label,
+    completed: false,
   });
 };

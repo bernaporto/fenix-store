@@ -1,5 +1,5 @@
 import { Card } from '../lib/Card';
-import { RadialProgressBar } from '../lib/RadialProgress';
+import { RadialProgressBar } from '../lib/RadialProgressBar';
 import { useProgress } from '../hooks';
 
 export const TaskListHeader: React.FC = () => {
