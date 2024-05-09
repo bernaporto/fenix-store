@@ -17,7 +17,7 @@ const getStore = () => {
   // Create the store with initial value to make sure that these paths will never return undefined
   const store = FenixStore.create<TAppState>(
     {
-      darkMode: false,
+      darkMode: true,
       tasks: {
         ids: [],
         items: {},
@@ -36,11 +36,17 @@ const getStore = () => {
   );
 
   // Load tasks from storage
-  const maybeTasks = Storage.get();
-  if (maybeTasks) {
+  const maybeTasks = Storage.tasks.get();
+  if (maybeTasks !== null) {
     Object.keys(maybeTasks).forEach((id) => {
       store.on(StorePath.TASK(id)).set(maybeTasks[id]);
     });
+  }
+
+  // Load dark mode from storage
+  const maybeDarkMode = Storage.darkMode.get();
+  if (maybeDarkMode !== null) {
+    store.on(StorePath.DARK_MODE).set(maybeDarkMode);
   }
 
   // Subscribe to item changes
@@ -48,7 +54,7 @@ const getStore = () => {
     const taskList = Object.values(tasks);
 
     // 1. Save to storage
-    Storage.save(tasks);
+    Storage.tasks.save(tasks);
 
     // 2. Update the ids list
     store
@@ -64,6 +70,11 @@ const getStore = () => {
     store
       .on(StorePath.COMPLETED)
       .set(taskList.filter((task) => task.completed).length);
+  });
+
+  // Subscribe to dark mode changes
+  store.on<boolean>(StorePath.DARK_MODE).subscribe((darkMode) => {
+    Storage.darkMode.save(darkMode);
   });
 
   return store;

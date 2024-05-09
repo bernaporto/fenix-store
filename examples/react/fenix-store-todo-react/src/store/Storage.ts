@@ -1,18 +1,27 @@
 import { TTaskMap } from '../types';
 
+const getKey = (key: string) => `fenix-store-todo-app.${key}`;
+
+const getStorageHandler = <T>(key: string) =>
+  Object.freeze({
+    get: (): T | null => {
+      try {
+        const fromStorage = localStorage.getItem(key);
+        return fromStorage ? JSON.parse(fromStorage) : null;
+      } catch {
+        return null;
+      }
+    },
+
+    save: (state: T) => {
+      localStorage.setItem(key, JSON.stringify(state));
+    },
+  });
+
+const TasksStorage = getStorageHandler<TTaskMap>(getKey('tasks'));
+const DarkModeStorage = getStorageHandler<boolean>(getKey('darkMode'));
+
 export const Storage = Object.freeze({
-  STORAGE_KEY: 'fenix-store-todo',
-
-  get: (): TTaskMap | null => {
-    try {
-      const fromStorage = localStorage.getItem(Storage.STORAGE_KEY);
-      return fromStorage ? JSON.parse(fromStorage) : null;
-    } catch {
-      return null;
-    }
-  },
-
-  save: (state: TTaskMap) => {
-    localStorage.setItem(Storage.STORAGE_KEY, JSON.stringify(state));
-  },
+  tasks: TasksStorage,
+  darkMode: DarkModeStorage,
 });
