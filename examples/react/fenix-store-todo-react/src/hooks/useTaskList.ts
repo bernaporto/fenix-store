@@ -3,12 +3,12 @@ import { TTaskItem } from '../types';
 import { useStore } from './useStore';
 
 export const useTaskList = () => {
-  const taskIds = useStore<string[]>(StorePath.TASK_IDS);
+  const { data: ids } = useStore<string[]>(StorePath.TASK_IDS);
 
   return {
+    ids,
     add: addTask,
     delete: deleteTask,
-    ids: taskIds.data,
   };
 };
 
