@@ -8,9 +8,8 @@ const noop = () => {
 };
 const config = <T>(initialValue?: T): TObservableConfig<T> => ({
   initialValue,
-  beforeChange: (next) => next,
-  afterChange: noop,
-  log: noop,
+  applyEffects: (next) => next,
+  onChange: noop,
   utils: {
     clone,
     equals,

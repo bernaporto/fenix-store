@@ -6,7 +6,7 @@ import type {
 } from './types';
 
 export const observable = <T>(config: TObservableConfig<T>): TObservable<T> => {
-  const { afterChange, beforeChange, log, utils } = config;
+  const { applyEffects, onChange, utils } = config;
   const observers = new Set<TObserver<T>>();
 
   const initialValue = utils.clone(config.initialValue as T);
@@ -36,14 +36,15 @@ export const observable = <T>(config: TObservableConfig<T>): TObservable<T> => {
     },
 
     set: (next, options = {}) => {
-      const { logKey = 'set', skipEvents = false } = options;
+      const { cancelBubble, logKey = 'set' } = options;
 
       /* 1. Verify equality */
       if (utils.equals(value, next)) return;
 
-      /* 2. Apply effects */
       const previous = self.get();
-      const _next = !skipEvents ? beforeChange(next, previous) : next;
+
+      /* 2. Apply effects */
+      const _next = applyEffects(next, previous);
 
       /* 3. Save new value */
       value = utils.clone(_next);
@@ -53,15 +54,7 @@ export const observable = <T>(config: TObservableConfig<T>): TObservable<T> => {
         observer(utils.clone(_next), previous);
       });
 
-      !skipEvents && afterChange(_next, previous);
-
-      /* 5. Log */
-      log({
-        key: logKey,
-        observers: observers.size,
-        next: _next,
-        previous: previous,
-      });
+      onChange({ cancelBubble, logKey, previous, next: _next });
     },
 
     observers: {

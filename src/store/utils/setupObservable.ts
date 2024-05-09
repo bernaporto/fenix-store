@@ -17,17 +17,16 @@ export const setupObservable = (
 ): TObservable<unknown> => {
   const { debug, debugKey, utils } = config;
 
-  return observable({
+  const ob = observable({
     utils,
 
     initialValue: getFromPath(path, state),
 
-    beforeChange: (next, previous) => {
-      /* Apply effects */
+    applyEffects: (next, previous) => {
       return applyEffects(path, next, previous, config, effects);
     },
 
-    afterChange: (next) => {
+    onChange: ({ logKey, next, previous, cancelBubble = false }) => {
       /* Update state */
       if (next === undefined) {
         deletePath(path, state);
@@ -35,26 +34,29 @@ export const setupObservable = (
         setAtPath(path, config.utils.clone(next), state);
       }
 
+      if (cancelBubble) return;
+
+      /* Log */
+      if (debug) {
+        log({
+          path,
+          observers: ob.observers.count,
+          baseMsg: getDebugMessage(`store.${logKey}`, debugKey),
+          next: utils.clone(next),
+          previous: utils.clone(previous),
+        });
+      }
+
       /* Notify other affected observables */
       Array.from(obMap.keys())
         .filter((p) => p !== path && (path.startsWith(p) || p.startsWith(path)))
         .forEach((p) => {
-          obMap.get(p)?.set(getFromPath(p, state), { skipEvents: true });
+          obMap.get(p)?.set(getFromPath(p, state), { cancelBubble: true });
         });
     },
-
-    log: ({ next, observers, previous, key }) => {
-      if (!debug) return;
-
-      log({
-        observers,
-        path,
-        baseMsg: getDebugMessage(`store.${key}`, debugKey),
-        next: utils.clone(next),
-        previous: utils.clone(previous),
-      });
-    },
   });
+
+  return ob;
 };
 
 const getDebugMessage = (action: string, key?: string) => {

@@ -12,7 +12,7 @@ type TObserverHandler = {
 
 type TSetOptions = {
   logKey?: string;
-  skipEvents?: boolean;
+  cancelBubble?: boolean;
 };
 
 export type TObservable<T = unknown> = {
@@ -28,18 +28,17 @@ export type TObservable<T = unknown> = {
   observers: TObserverHandler;
 };
 
-type TLogConfig = {
-  key: string;
-  observers: number;
+type TChangeEvent = {
+  logKey: string;
   next: unknown;
   previous: unknown;
+  cancelBubble?: boolean;
 };
 
 export type TObservableConfig<T> = {
   utils: TUtils;
   initialValue?: T;
 } & {
-  afterChange: (next: T, previous?: T) => void;
-  beforeChange: (next: T, previous?: T) => T;
-  log: (config: TLogConfig) => void;
+  applyEffects: (next: T, previous: T) => T;
+  onChange: (event: TChangeEvent) => void;
 };
