@@ -7,12 +7,13 @@ export type TTaskItem = {
 export type TTaskMap = Record<string, TTaskItem>;
 
 export type TAppState = {
-  tasks: {
-    ids: string[];
-    items: TTaskMap;
-  };
+  darkMode: boolean;
   progress: {
     completed: number;
     total: number;
+  };
+  tasks: {
+    ids: string[];
+    items: TTaskMap;
   };
 };

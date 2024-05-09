@@ -17,6 +17,7 @@ const getStore = () => {
   // Create the store with initial value to make sure that these paths will never return undefined
   const store = FenixStore.create<TAppState>(
     {
+      darkMode: false,
       tasks: {
         ids: [],
         items: {},
