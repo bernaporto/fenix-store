@@ -1,0 +1,53 @@
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+@tailwind base;
+@tailwind utilities;
+
+@layer utilities {
+  .custom-focus-outline {
+    @apply focus:outline-none focus:ring-0;
+    @apply focus:outline-gray-700 focus:dark:focus:outline-gray-300 focus:outline-1;
+  }
+}
+
+#root {
+  @apply w-full h-full;
+}
+
+body {
+  @apply w-screen h-screen overflow-hidden;
+  @apply text-sm font-extralight tracking-wider;
+}
+
+a,
+input,
+button {
+  @apply custom-focus-outline;
+}
+
+a {
+  @apply text-primary-600 dark:text-primary-400 hover:underline rounded px-1 py-0.5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  @apply font-bold tracking-wider;
+}
+
+h1 {
+  @apply text-2xl mb-3;
+}
+
+h2 {
+  @apply text-xl mb-2;
+}
+
+h3 {
+  @apply text-lg;
+}
+
+h5 {
+  @apply font-normal;
+}

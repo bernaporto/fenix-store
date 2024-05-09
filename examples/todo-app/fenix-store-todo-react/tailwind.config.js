@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-import { theme } from '../shared/tailwind.config';
+import { theme } from '../tailwind.config';
 
 export default {
   theme,
