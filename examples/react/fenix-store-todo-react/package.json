@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@bernaporto/fenix-store": "file:../../..",
+    "bootstrap-icons": "^1.11.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

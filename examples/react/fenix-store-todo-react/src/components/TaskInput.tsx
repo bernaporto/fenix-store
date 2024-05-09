@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { useTaskList } from '../hooks/useTaskList';
+import { useTaskList } from '../hooks';
 import { classNames } from '../utils/classNames';
 
 export const TaskInput: React.FC = () => {
-  const [label, setLabel] = useState('');
+  const [value, setValue] = useState('');
   const tasks = useTaskList();
 
   const handleAddTask = () => {
-    if (label) {
-      tasks.add(label);
-      setLabel('');
+    if (value) {
+      tasks.add(value);
+      setValue('');
     }
   };
 
@@ -18,24 +18,21 @@ export const TaskInput: React.FC = () => {
       <input
         className="bg-gray-200 dark:bg-gray-800 py-4 px-6 rounded-xl flex-1"
         placeholder="Enter your next task..."
-        value={label}
-        onChange={(e) => setLabel(e.target.value)}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
 
       <button
         className={classNames(
           'w-13 h-13 p-2',
           'flex items-center justify-center',
+          'text-gray-100 dark:text-gray-900 text-2xl',
           'bg-primary-400 dark:bg-primary-600',
           'rounded-xl',
         )}
         onClick={handleAddTask}
       >
-        <img
-          className="w-6 h-6"
-          src="./icons/plus-lg.svg"
-          alt="Add task icon"
-        />
+        <i className="bi bi-plus-lg" />
       </button>
     </section>
   );

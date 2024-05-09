@@ -1,11 +1,25 @@
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
 @tailwind base;
 @tailwind utilities;
+
+@layer utilities {
+  .custom-focus-outline {
+    @apply focus:outline-none focus:ring-0;
+    @apply focus:outline-gray-700 focus:dark:focus:outline-gray-300 focus:outline-1;
+  }
+}
+
+#root {
+  @apply w-full h-full;
+}
 
 body {
   @apply w-screen h-screen overflow-hidden;
   @apply text-sm font-extralight tracking-wider;
 }
 
-#root {
-  @apply w-full h-full;
+input,
+button {
+  @apply custom-focus-outline;
 }

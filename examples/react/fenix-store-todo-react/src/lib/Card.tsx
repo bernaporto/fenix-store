@@ -7,7 +7,7 @@ type TCardProps = PropsWithChildren & {
 
 export const Card: React.FC<TCardProps> = ({ children, className }) => {
   return (
-    <div
+    <section
       className={classNames(
         'bg-gray-500 bg-opacity-10 dark:bg-opacity-5',
         'border border-gray-300 dark:border-gray-700',
@@ -16,6 +16,6 @@ export const Card: React.FC<TCardProps> = ({ children, className }) => {
       )}
     >
       {children}
-    </div>
+    </section>
   );
 };

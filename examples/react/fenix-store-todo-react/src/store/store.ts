@@ -7,7 +7,7 @@ const equals = (a: unknown, b: unknown): boolean => {
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length) return false;
 
-    return a.every((item) => b.some((bItem) => equals(item, bItem)));
+    return a.every((item, index) => equals(item, b.at(index)));
   }
 
   return a === b;
@@ -33,14 +33,19 @@ const getStore = () => {
   // Load tasks from storage
   const maybeTasks = Storage.get();
   if (maybeTasks) {
-    store.on(StorePath.TASKS).set(maybeTasks);
-    store.on(StorePath.TASK_IDS).set(Object.keys(maybeTasks));
+    Object.keys(maybeTasks).forEach((id) => {
+      store.on(StorePath.TASK(id)).set(maybeTasks[id]);
+    });
   }
 
   // Subscribe to set the id list once items change
-  store.on(StorePath.TASKS).subscribe((tasks: TTaskMap) => {
+  store.on<TTaskMap>(StorePath.TASKS).subscribe((tasks) => {
     // Update the ids list
-    store.on(StorePath.TASK_IDS).set(Object.keys(tasks));
+    store.on<string[]>(StorePath.TASK_IDS).set(
+      Object.values(tasks)
+        .sort((a, b) => Number(a.completed) - Number(b.completed))
+        .map(({ id }) => id),
+    );
 
     // Save to storage
     Storage.save(tasks);

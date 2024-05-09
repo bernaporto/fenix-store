@@ -3,19 +3,20 @@ import { store } from '../store';
 
 export const useStore = <T>(path: string) => {
   const ob = useMemo(() => store.on<T>(path), [path]);
-  const [data, setData] = useState<T>(ob.get());
+  const [value, setValue] = useState<T>(ob.get());
 
   useEffect(
     () =>
       ob.subscribe((next) => {
-        setData(next);
+        setValue(next);
       }),
     [ob],
   );
 
   return {
-    data,
+    value,
     set: ob.set,
     update: ob.update,
+    reset: ob.reset,
   };
 };

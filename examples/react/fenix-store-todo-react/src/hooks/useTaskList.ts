@@ -3,12 +3,11 @@ import { TTaskItem } from '../types';
 import { useStore } from './useStore';
 
 export const useTaskList = () => {
-  const { data: ids } = useStore<string[]>(StorePath.TASK_IDS);
+  const { value: ids } = useStore<string[]>(StorePath.TASK_IDS);
 
   return {
     ids,
     add: addTask,
-    delete: deleteTask,
   };
 };
 
@@ -21,5 +20,3 @@ const addTask = (label: string) => {
     label,
   });
 };
-
-const deleteTask = (id: string) => store.on(StorePath.TASK(id)).reset();

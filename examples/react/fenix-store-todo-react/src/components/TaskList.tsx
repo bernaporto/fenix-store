@@ -1,4 +1,4 @@
-import { useTaskList } from '../hooks/useTaskList';
+import { useTaskList } from '../hooks';
 import { TaskItem } from './TaskItem';
 
 export const TaskList: React.FC = () => {
