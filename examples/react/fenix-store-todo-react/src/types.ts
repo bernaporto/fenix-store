@@ -11,4 +11,8 @@ export type TAppState = {
     ids: string[];
     items: TTaskMap;
   };
+  progress: {
+    completed: number;
+    total: number;
+  };
 };

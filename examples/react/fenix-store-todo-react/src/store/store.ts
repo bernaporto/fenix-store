@@ -21,6 +21,10 @@ const getStore = () => {
         ids: [],
         items: {},
       },
+      progress: {
+        completed: 0,
+        total: 0,
+      },
     },
     {
       debug: import.meta.env.MODE === 'development',
@@ -38,17 +42,27 @@ const getStore = () => {
     });
   }
 
-  // Subscribe to set the id list once items change
+  // Subscribe to item changes
   store.on<TTaskMap>(StorePath.TASKS).subscribe((tasks) => {
-    // Update the ids list
-    store.on<string[]>(StorePath.TASK_IDS).set(
-      Object.values(tasks)
-        .sort((a, b) => Number(a.completed) - Number(b.completed))
-        .map(({ id }) => id),
-    );
+    const taskList = Object.values(tasks);
 
-    // Save to storage
+    // 1. Save to storage
     Storage.save(tasks);
+
+    // 2. Update the ids list
+    store
+      .on<string[]>(StorePath.TASK_IDS)
+      .set(
+        taskList
+          .sort((a, b) => Number(a.completed) - Number(b.completed))
+          .map(({ id }) => id),
+      );
+
+    // 3. Update total and completed tasks count
+    store.on(StorePath.TOTAL).set(taskList.length);
+    store
+      .on(StorePath.COMPLETED)
+      .set(taskList.filter((task) => task.completed).length);
   });
 
   return store;

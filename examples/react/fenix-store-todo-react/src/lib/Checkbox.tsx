@@ -15,7 +15,7 @@ export const Checkbox: React.FC<TCheckboxProps> = ({ checked, onChange }) => {
         'border-gray-400 dark:border-gray-600',
         'text-gray-100 dark:text-gray-900',
         {
-          'border-0 bg-primary-400 dark:bg-primary-600': checked,
+          'border-0 bg-primary-400 dark:bg-primary-500': checked,
         },
       )}
       onClick={() => onChange(!checked)}

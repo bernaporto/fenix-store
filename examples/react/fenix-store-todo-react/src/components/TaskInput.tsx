@@ -17,7 +17,7 @@ export const TaskInput: React.FC = () => {
     <section className="w-full flex gap-3">
       <input
         className="bg-gray-200 dark:bg-gray-800 py-4 px-6 rounded-xl flex-1"
-        placeholder="Enter your next task..."
+        placeholder="Enter the task label..."
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
@@ -27,7 +27,7 @@ export const TaskInput: React.FC = () => {
           'w-13 h-13 p-2',
           'flex items-center justify-center',
           'text-gray-100 dark:text-gray-900 text-2xl',
-          'bg-primary-400 dark:bg-primary-600',
+          'bg-primary-400 dark:bg-primary-500',
           'rounded-xl',
         )}
         onClick={handleAddTask}
