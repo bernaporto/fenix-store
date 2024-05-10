@@ -6,7 +6,7 @@
 </script>
 
 <main class={classNames('w-full flex-1 overflow-y-auto')}>
-  <section class="max-w-md h-full m-auto flex flex-col gap-6">
+  <section class="max-w-md h-full m-auto flex flex-col gap-6 px-3">
     <TaskListHeader />
     <TaskInput />
     <TaskList />

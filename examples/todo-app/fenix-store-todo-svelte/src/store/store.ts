@@ -57,13 +57,7 @@ const getStore = () => {
     Storage.tasks.save(tasks);
 
     // 2. Update the ids list
-    store
-      .on<string[]>(StorePath.TASK_IDS)
-      .set(
-        taskList
-          .sort((a, b) => Number(a.completed) - Number(b.completed))
-          .map(({ id }) => id),
-      );
+    store.on<string[]>(StorePath.TASK_IDS).set(taskList.map(({ id }) => id));
 
     // 3. Update total and completed tasks count
     store.on(StorePath.TOTAL).set(taskList.length);
