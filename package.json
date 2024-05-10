@@ -16,6 +16,7 @@
     "prebuild": "tsc && yarn lint && yarn test",
     "build": "vite build",
     "build:dev": "yarn --ignore-scripts vite build --mode development",
+    "build:demos": "sh scripts/build-demos.sh",
     "prepare": "husky"
   },
   "devDependencies": {

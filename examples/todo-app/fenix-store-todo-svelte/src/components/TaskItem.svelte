@@ -2,7 +2,6 @@
   import Card from '../lib/Card.svelte';
   import Checkbox from '../lib/Checkbox.svelte';
   import { StorePath, store } from '../store';
-  import type { TTaskItem } from '../types';
   import { classNames } from '../utils/classNames';
 
   export let id: string;
