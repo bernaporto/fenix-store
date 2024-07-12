@@ -1,8 +1,5 @@
-import type { TUtils } from '@/utils/types';
 import type { TObservableLike } from './ObservableProxy/types';
 import { TEffectHandler } from './EffectManager/types';
-
-/* STORE */
 
 export type TState = Record<string, unknown>;
 
@@ -25,4 +22,9 @@ export type TStoreConfig = {
 
 export type TOptionalStoreConfig = Omit<Partial<TStoreConfig>, 'utils'> & {
   utils?: Partial<TUtils>;
+};
+
+export type TUtils = {
+  clone: <T>(value: T) => T;
+  equals: (a: unknown, b: unknown) => boolean;
 };

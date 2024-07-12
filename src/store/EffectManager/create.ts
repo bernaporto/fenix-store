@@ -1,5 +1,5 @@
 import { isNotNullable } from '@/utils/nullable';
-import { TUtils } from '@/utils/types';
+import { TUtils } from '../types';
 import type { TEffectManager, TEffectHandler, TStoreEffect } from './types';
 
 export const create = (utils: TUtils): TEffectManager => {
