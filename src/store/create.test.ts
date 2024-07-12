@@ -1,3 +1,4 @@
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { FenixStore } from '@/store';
 
 describe('Store', () => {
@@ -5,7 +6,7 @@ describe('Store', () => {
     const store = FenixStore.create();
     const observable = store.on('key');
 
-    const observer = jest.fn();
+    const observer = vi.fn();
 
     observable.subscribe(observer);
 
@@ -25,8 +26,8 @@ describe('Store', () => {
     const observable1 = store.on('key1');
     const observable2 = store.on('key1.key2');
 
-    const observer1 = jest.fn();
-    const observer2 = jest.fn();
+    const observer1 = vi.fn();
+    const observer2 = vi.fn();
 
     observable1.subscribe(observer1, false);
     observable2.subscribe(observer2, false);
@@ -48,8 +49,8 @@ describe('Store', () => {
     const observable1 = store.on('key1');
     const observable2 = store.on('key1.key2');
 
-    const observer1 = jest.fn();
-    const observer2 = jest.fn();
+    const observer1 = vi.fn();
+    const observer2 = vi.fn();
 
     observable1.subscribe(observer1, false);
     observable2.subscribe(observer2, false);
@@ -66,7 +67,7 @@ describe('Store', () => {
       const store = FenixStore.create();
       const observable = store.on('key');
 
-      const observer = jest.fn();
+      const observer = vi.fn();
 
       observable.subscribe(observer, false);
       expect(observer).not.toHaveBeenCalled();
@@ -89,7 +90,7 @@ describe('Store', () => {
       expect(observable).toHaveProperty('subscribe');
       expect(observable).toHaveProperty('update');
 
-      const observer = jest.fn();
+      const observer = vi.fn();
       const unsubscribe = observable.subscribe(observer, false);
 
       observable.set(1);
@@ -158,10 +159,10 @@ describe('Store', () => {
       observable3.set(1);
       observable4.set('test');
 
-      const observer1 = jest.fn();
-      const observer2 = jest.fn();
-      const observer3 = jest.fn();
-      const observer4 = jest.fn();
+      const observer1 = vi.fn();
+      const observer2 = vi.fn();
+      const observer3 = vi.fn();
+      const observer4 = vi.fn();
 
       observable1.subscribe(observer1, false);
       observable2.subscribe(observer2, false);
@@ -184,7 +185,7 @@ describe('Store', () => {
     it('should apply the effects to the observable', () => {
       const store = FenixStore.create();
 
-      const effect = jest.fn();
+      const effect = vi.fn();
       store.effects.use(effect);
 
       store.on('key').set(1);
@@ -195,7 +196,7 @@ describe('Store', () => {
     it('should apply effects return value to the observable', () => {
       const store = FenixStore.create();
 
-      const effect = jest.fn((_, value) => ({ next: value + 1 }));
+      const effect = vi.fn((_, value) => ({ next: value + 1 }));
       store.effects.use(effect);
 
       const observable = store.on('key');
@@ -207,10 +208,10 @@ describe('Store', () => {
     it('should apply effects in order', () => {
       const store = FenixStore.create();
 
-      const effect1 = jest.fn((_, value) => ({ next: value + 1 }));
+      const effect1 = vi.fn((_, value) => ({ next: value + 1 }));
       store.effects.use(effect1);
 
-      const effect2 = jest.fn((_, value) => ({ next: value.toFixed(2) }));
+      const effect2 = vi.fn((_, value) => ({ next: value.toFixed(2) }));
       store.effects.use(effect2);
 
       const observable = store.on('key');
@@ -227,7 +228,7 @@ describe('Store', () => {
     it('should consider an undefined value as a valid result', () => {
       const store = FenixStore.create();
 
-      const effect = jest.fn(() => ({ next: undefined }));
+      const effect = vi.fn(() => ({ next: undefined }));
       store.effects.use(effect);
 
       const observable = store.on('key');
@@ -240,12 +241,12 @@ describe('Store', () => {
 
   describe('config.debug', () => {
     beforeAll(() => {
-      jest.spyOn(console, 'groupCollapsed').mockImplementation(() => {});
-      jest.spyOn(console, 'log').mockImplementation(() => {});
+      vi.spyOn(console, 'groupCollapsed').mockImplementation(() => {});
+      vi.spyOn(console, 'log').mockImplementation(() => {});
     });
 
     afterAll(() => {
-      jest.restoreAllMocks();
+      vi.restoreAllMocks();
     });
 
     it('should log the changes', () => {

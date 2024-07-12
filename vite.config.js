@@ -10,6 +10,9 @@ export default defineConfig({
   ],
   build: {
     sourcemap: true,
+    test: {
+      include: ['**/*.test.*'],
+    },
     lib: {
       entry: ['src/index.ts'],
       formats: ['cjs', 'es'],

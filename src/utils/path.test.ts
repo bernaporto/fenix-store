@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { getFromPath, setAtPath } from './path';
 
 describe('getFromPath', () => {

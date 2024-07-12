@@ -1,3 +1,4 @@
+import { describe, expect, it, vi } from 'vitest';
 import { FenixStore } from './store';
 
 /* README EXAMPLES */
@@ -16,7 +17,7 @@ describe('FenixStore', () => {
   it('should handle subscriptions', () => {
     const store = FenixStore.create();
 
-    const observer1 = jest.fn();
+    const observer1 = vi.fn();
     const unsubscribe = store.on('user.name').subscribe(observer1, false);
 
     store.on('user.name').set('John Doe');
@@ -43,7 +44,7 @@ describe('FenixStore', () => {
     const store = FenixStore.create();
 
     const observable = store.on('user.name');
-    const observer1 = jest.fn();
+    const observer1 = vi.fn();
     observable.subscribe(observer1, false);
 
     observable.set('John Doe');
@@ -65,7 +66,7 @@ describe('FenixStore', () => {
       return { next: `Hello, ${next}` };
     });
 
-    const observer = jest.fn();
+    const observer = vi.fn();
     store.on('user.name').subscribe(observer, false);
 
     store.on('user.name').set('John Doe');
@@ -100,7 +101,7 @@ describe('FenixStore', () => {
   it('should allow to clear effects', () => {
     const store = FenixStore.create();
 
-    const effect = jest.fn();
+    const effect = vi.fn();
     store.effects.use(effect);
 
     store.on('user.name').set('John Doe');
