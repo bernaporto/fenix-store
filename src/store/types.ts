@@ -1,37 +1,19 @@
-import type { TObservable } from '@/observable';
 import type { TUtils } from '@/utils/types';
+import type { TObservableLike } from './ObservableProxy/types';
+import { TEffectHandler } from './EffectManager/types';
 
 /* STORE */
-type TEffectManager = {
-  use: <T = unknown>(effect: TStoreEffect<T>) => void;
-};
-
-export type TExtendedEffectManager = TEffectManager & {
-  list: () => TStoreEffect[];
-} & {
-  clear: VoidFunction;
-};
 
 export type TState = Record<string, unknown>;
-export type TStoreEffect<T = unknown> = (
-  path: string,
-  value: T,
-  previous?: T,
-) => { next: unknown } | void;
 
-export type TStoreObservable<T> = Pick<
-  TObservable<T>,
-  'get' | 'reset' | 'subscribe' | 'update'
-> & {
-  set: (value: T) => void;
-};
+export type TStoreObservable<T> = TObservableLike<T>;
 
 export type TStore<State extends TState> = {
   on: <T>(path: string) => TStoreObservable<T>;
   get: () => State;
 } & {
   clear: VoidFunction;
-  effects: TEffectManager;
+  effects: TEffectHandler;
   reset: VoidFunction;
 };
 

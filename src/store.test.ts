@@ -17,19 +17,43 @@ describe('FenixStore', () => {
     const store = FenixStore.create();
 
     const observer1 = jest.fn();
-    const unsubscribe = store.on('user.name').subscribe(observer1);
-
-    const observer2 = jest.fn();
-    store.on('user.name').subscribe(observer2);
+    const unsubscribe = store.on('user.name').subscribe(observer1, false);
 
     store.on('user.name').set('John Doe');
-    expect(observer1).toHaveBeenLastCalledWith('John Doe', undefined);
+    expect(observer1).toHaveBeenLastCalledWith('John Doe');
 
     unsubscribe();
 
     store.on('user.name').set('Jane Doe');
-    expect(observer1).toHaveBeenCalledTimes(2);
-    expect(observer1).toHaveBeenLastCalledWith('John Doe', undefined);
+    expect(observer1).toHaveBeenCalledTimes(1);
+    expect(observer1).toHaveBeenLastCalledWith('John Doe');
+  });
+
+  it('should gracefully handle missing paths', () => {
+    const store = FenixStore.create();
+
+    store.on('user.name').set('John Doe');
+    expect(store.on('user.name').get()).toEqual('John Doe');
+
+    store.on('user.age').set(30);
+    expect(store.on('user.age').get()).toEqual(30);
+  });
+
+  it('should gracefully handle equality checks', () => {
+    const store = FenixStore.create();
+
+    const observable = store.on('user.name');
+    const observer1 = jest.fn();
+    observable.subscribe(observer1, false);
+
+    observable.set('John Doe');
+
+    expect(observer1).toHaveBeenCalledTimes(1);
+    expect(observer1).toHaveBeenLastCalledWith('John Doe');
+
+    observable.set('John Doe');
+
+    expect(observer1).toHaveBeenCalledTimes(1);
   });
 
   it('should apply effects (1)', () => {
@@ -42,13 +66,13 @@ describe('FenixStore', () => {
     });
 
     const observer = jest.fn();
-    store.on('user.name').subscribe(observer);
+    store.on('user.name').subscribe(observer, false);
 
     store.on('user.name').set('John Doe');
-    expect(observer).toHaveBeenCalledWith('Hello, John Doe', undefined);
+    expect(observer).toHaveBeenCalledWith('Hello, John Doe');
 
     store.on('user.name').set('Jane Doe');
-    expect(observer).toHaveBeenCalledWith('Hello, Jane Doe', 'Hello, John Doe');
+    expect(observer).toHaveBeenLastCalledWith('Hello, Jane Doe');
   });
 
   it('should apply effects (2)', () => {
@@ -71,5 +95,20 @@ describe('FenixStore', () => {
       next: 'Jane Doe',
       previous: 'John Doe',
     });
+  });
+
+  it('should allow to clear effects', () => {
+    const store = FenixStore.create();
+
+    const effect = jest.fn();
+    store.effects.use(effect);
+
+    store.on('user.name').set('John Doe');
+    expect(effect).toHaveBeenCalledTimes(1);
+
+    store.effects.clear();
+
+    store.on('user.name').set('Jane Doe');
+    expect(effect).toHaveBeenCalledTimes(1);
   });
 });

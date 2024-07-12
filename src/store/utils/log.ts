@@ -41,3 +41,7 @@ const getCaller = () => {
 
   return caller.trim();
 };
+
+export const getDebugMessage = (action: string, key?: string) => {
+  return [key && `[${key}]`, action].filter(Boolean).join(' ');
+};

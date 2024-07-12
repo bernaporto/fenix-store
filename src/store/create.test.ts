@@ -28,8 +28,8 @@ describe('Store', () => {
     const observer1 = jest.fn();
     const observer2 = jest.fn();
 
-    observable1.subscribe(observer1);
-    observable2.subscribe(observer2);
+    observable1.subscribe(observer1, false);
+    observable2.subscribe(observer2, false);
 
     observable2.set(1);
 
@@ -51,8 +51,8 @@ describe('Store', () => {
     const observer1 = jest.fn();
     const observer2 = jest.fn();
 
-    observable1.subscribe(observer1);
-    observable2.subscribe(observer2);
+    observable1.subscribe(observer1, false);
+    observable2.subscribe(observer2, false);
 
     observable1.set({ key2: 1 });
 
@@ -61,19 +61,20 @@ describe('Store', () => {
     expect(observable2.get()).toBe(1);
   });
 
-  describe('dispose', () => {
+  describe('clear', () => {
     it('should clear all observables', () => {
       const store = FenixStore.create();
       const observable = store.on('key');
 
       const observer = jest.fn();
 
-      observable.subscribe(observer);
-      store.clear();
+      observable.subscribe(observer, false);
+      expect(observer).not.toHaveBeenCalled();
 
+      store.clear();
       observable.set(1);
 
-      expect(observer).toHaveBeenCalledTimes(1);
+      expect(observer).not.toHaveBeenCalled();
     });
   });
 
@@ -89,7 +90,7 @@ describe('Store', () => {
       expect(observable).toHaveProperty('update');
 
       const observer = jest.fn();
-      const unsubscribe = observable.subscribe(observer);
+      const unsubscribe = observable.subscribe(observer, false);
 
       observable.set(1);
       expect(observable.get()).toBe(1);
@@ -97,13 +98,13 @@ describe('Store', () => {
       observable.update((value) => value + 1);
       expect(observable.get()).toBe(2);
 
-      expect(observer).toHaveBeenCalledTimes(3);
+      expect(observer).toHaveBeenCalledTimes(2);
       unsubscribe();
 
       observable.reset();
       expect(observable.get()).toBeUndefined();
 
-      expect(observer).toHaveBeenCalledTimes(3);
+      expect(observer).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -149,9 +150,7 @@ describe('Store', () => {
       const effect = jest.fn();
       store.effects.use(effect);
 
-      const observable = store.on('key');
-
-      observable.set(1);
+      store.on('key').set(1);
 
       expect(effect).toHaveBeenCalled();
     });
@@ -163,7 +162,6 @@ describe('Store', () => {
       store.effects.use(effect);
 
       const observable = store.on('key');
-
       observable.set(1);
 
       expect(observable.get()).toBe(2);
