@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { FenixStore } from '@/store';
+import { FenixStore } from './index';
 
 describe('Store', () => {
   it('should notify the affected observable', () => {

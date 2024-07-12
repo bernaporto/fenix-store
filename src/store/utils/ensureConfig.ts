@@ -1,6 +1,4 @@
-import { clone } from '@/utils/clone';
-import { equals } from '@/utils/equals';
-import { merge } from '@/utils/merge';
+import { clone, equals, merge } from '@bernaporto/utilities';
 import type { TOptionalStoreConfig, TStoreConfig } from '../types';
 
 const defaultConfig: TStoreConfig = {

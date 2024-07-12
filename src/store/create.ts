@@ -1,4 +1,4 @@
-import { getFromPath, setAtPath } from '@/utils/path';
+import { getFromPath, setAtPath } from '@bernaporto/utilities';
 import { EffectManager } from './EffectManager';
 import { ensureConfig } from './utils/ensureConfig';
 import { getDebugMessage, log } from './utils/log';

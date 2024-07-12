@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { FenixStore } from './store';
+import { FenixStore } from './Store';
 
 /* README EXAMPLES */
 describe('FenixStore', () => {
