@@ -1,13 +1,14 @@
 import type { TObservableProxy, TObservableLike, TObserver } from './types';
 
 type TObservableProxyConfig<T> = {
+  initialValue: T;
+} & {
   getValue: () => T;
-  setValue: (value: T) => void;
-  reset: () => void;
+  setValue: (value: T, logKey?: string) => void;
 };
 
 export const create = <T>({
-  reset,
+  initialValue,
   getValue,
   setValue,
 }: TObservableProxyConfig<T>): TObservableProxy<T> => {
@@ -19,11 +20,11 @@ export const create = <T>({
     },
 
     reset: () => {
-      reset();
+      setValue(initialValue, 'reset');
     },
 
     set: (value) => {
-      setValue(value);
+      setValue(value, 'set');
     },
 
     subscribe: (observer, notifyImmediately = true) => {
@@ -39,7 +40,7 @@ export const create = <T>({
     },
 
     update: (updater) => {
-      observable.set(updater(observable.get()));
+      setValue(updater(getValue()), 'update');
     },
   };
 

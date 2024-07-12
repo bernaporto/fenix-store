@@ -141,6 +141,43 @@ describe('Store', () => {
         },
       });
     });
+
+    it('should notify all affected observables', () => {
+      const store = FenixStore.create({
+        key1: 0,
+        key2: {
+          key3: 0,
+        },
+      });
+
+      const observable1 = store.on('key1');
+      const observable2 = store.on('key2');
+      const observable3 = store.on('key2.key3');
+      const observable4 = store.on('key2.key4');
+
+      observable3.set(1);
+      observable4.set('test');
+
+      const observer1 = jest.fn();
+      const observer2 = jest.fn();
+      const observer3 = jest.fn();
+      const observer4 = jest.fn();
+
+      observable1.subscribe(observer1, false);
+      observable2.subscribe(observer2, false);
+      observable3.subscribe(observer3, false);
+      observable4.subscribe(observer4, false);
+
+      store.reset();
+
+      expect(observer1).not.toHaveBeenCalled();
+      expect(observer2).toHaveBeenCalled();
+      expect(observer2).toHaveBeenLastCalledWith({ key3: 0 });
+      expect(observer3).toHaveBeenCalled();
+      expect(observer3).toHaveBeenLastCalledWith(0);
+      expect(observer4).toHaveBeenCalled();
+      expect(observer4).toHaveBeenLastCalledWith(undefined);
+    });
   });
 
   describe('effects', () => {

@@ -1,13 +1,13 @@
 import { getFromPath, setAtPath } from '@/utils/path';
+import { EffectManager } from './EffectManager';
 import { ensureConfig } from './utils/ensureConfig';
-import { log, getDebugMessage } from './utils/log';
+import { getDebugMessage, log } from './utils/log';
 import { ObservableProxy } from './ObservableProxy';
 import type {
   TObservableLike,
   TObservableProxy,
 } from './ObservableProxy/types';
 import type { TOptionalStoreConfig, TState, TStore } from './types';
-import { EffectManager } from './EffectManager';
 
 export const create = <T extends TState = TState>(
   initialValue: T = Object.create(null),
@@ -32,10 +32,7 @@ export const create = <T extends TState = TState>(
     };
 
     const proxy = ObservableProxy.create({
-      reset: () => {
-        cloneAndSet(getFromPath(path, initialState));
-        proxy.notify(getCloned(path));
-      },
+      initialValue: getFromPath(path, initialState),
 
       getValue: () => getCloned(path),
 
@@ -86,6 +83,7 @@ export const create = <T extends TState = TState>(
 
     clear: () => {
       proxies.forEach((proxy) => proxy.observers.clear());
+      proxies.clear();
     },
 
     get: () => {
@@ -99,7 +97,21 @@ export const create = <T extends TState = TState>(
     },
 
     reset: () => {
+      // 1. Reset all state to its initial value
       state = utils.clone(initialState);
+
+      // 2. cleanup unused proxies
+      Array.from(proxies.entries()).forEach(([path, proxy]) => {
+        if (proxy.observers.size === 0) {
+          proxies.delete(path);
+        }
+      });
+
+      // 3. Reset all valid observables to trigger their observers
+      Array.from(proxies.entries())
+        // 3.1. Sort by path length to reset children first
+        .sort(([a], [b]) => b.length - a.length)
+        .forEach(([, proxy]) => proxy.observable.reset());
     },
   };
 
