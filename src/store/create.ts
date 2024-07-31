@@ -1,7 +1,12 @@
 import { getFromPath, setAtPath } from '@bernaporto/utilities';
 import { EffectManager } from './EffectManager';
-import { ensureConfig } from './utils/ensureConfig';
-import { getDebugMessage, log } from './utils/log';
+import {
+  ensureConfig,
+  getDebugMessage,
+  isRelatedTo,
+  log,
+  sortByPathLength,
+} from './utils';
 import { ObservableProxy } from './ObservableProxy';
 import type {
   TObservableLike,
@@ -65,11 +70,12 @@ export const create = <T extends TState = TState>(
         proxy.notify(getCloned(path));
 
         /* 6. Notify other affected observables */
-        Array.from(proxies.entries()).forEach(([p, ob]) => {
-          if (p !== path && (path.startsWith(p) || p.startsWith(path))) {
+        Array.from(proxies.entries())
+          .filter(isRelatedTo(path))
+          .sort(sortByPathLength)
+          .forEach(([p, ob]) => {
             ob.notify(getCloned(p));
-          }
-        });
+          });
       },
     });
 
@@ -110,7 +116,7 @@ export const create = <T extends TState = TState>(
       // 3. Reset all valid observables to trigger their observers
       Array.from(proxies.entries())
         // 3.1. Sort by path length to reset children first
-        .sort(([a], [b]) => b.length - a.length)
+        .sort(sortByPathLength)
         .forEach(([, proxy]) => proxy.observable.reset());
     },
   };
