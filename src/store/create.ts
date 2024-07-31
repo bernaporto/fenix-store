@@ -1,4 +1,4 @@
-import { getFromPath, setAtPath } from '@bernaporto/utilities';
+import { deleteAtPath, getFromPath, setAtPath } from '@bernaporto/utilities';
 import { EffectManager } from './EffectManager';
 import {
   ensureConfig,
@@ -53,7 +53,8 @@ export const create = <T extends TState = TState>(
         const next = effects.apply(path, value, previous);
 
         /* 3. Save new value */
-        cloneAndSet(next);
+        if (next === undefined) deleteAtPath(path, state);
+        else cloneAndSet(next);
 
         /* 4. Log */
         if (_config.debug) {
