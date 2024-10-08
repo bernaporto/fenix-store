@@ -5,7 +5,8 @@ import { classNames } from './utils/classNames';
 import { useDarkMode } from './hooks';
 
 function App() {
-  const { darkMode } = useDarkMode();
+  const darkMode = useDarkMode();
+
   return (
     <div
       className={classNames(

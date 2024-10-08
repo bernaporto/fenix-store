@@ -1,8 +1,9 @@
 import { Switch } from '../lib/Switch';
 import { useDarkMode } from '../hooks';
+import { StoreUtils } from '../store';
 
 export const AppHeader: React.FC = () => {
-  const { darkMode, toggleDarkMode } = useDarkMode();
+  const darkMode = useDarkMode();
 
   return (
     <header className="w-full p-4 mb-2 flex items-center">
@@ -12,7 +13,7 @@ export const AppHeader: React.FC = () => {
 
       <article className="flex items-center gap-3 text-lg">
         <i className="bi bi-sun" />
-        <Switch checked={darkMode} onClick={toggleDarkMode} />
+        <Switch checked={darkMode} onClick={StoreUtils.darkMode.toggle} />
         <i className="bi bi-moon" />
       </article>
     </header>

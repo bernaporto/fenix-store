@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { useTaskList } from '../hooks';
 import { classNames } from '../utils/classNames';
+import { StoreUtils } from '../store';
 
 export const TaskInput: React.FC = () => {
   const [value, setValue] = useState('');
-  const tasks = useTaskList();
 
   const handleAddTask = () => {
     if (value) {
-      tasks.add(value);
+      StoreUtils.tasks.create(value);
       setValue('');
     }
   };

@@ -2,12 +2,11 @@ import { StorePath } from '../store';
 import type { TTaskItem } from '../types';
 import { useStore } from './useStore';
 
-export const useTaskProperty = <T extends keyof TTaskItem>(
+export const useTaskProperty = <K extends keyof TTaskItem>(
   id: string,
-  property: T,
+  property: K,
 ) => {
-  const path = `${StorePath.TASK(id)}.${property}`;
-  const ob = useStore<TTaskItem[T]>(path);
+  const ob = useStore<TTaskItem[K]>(`${StorePath.TASK(id)}.${property}`);
 
   return {
     value: ob.value,
