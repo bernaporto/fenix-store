@@ -31,7 +31,7 @@
         transform-origin: 50% 50%;
       `}
       stroke-dasharray="251.2"
-      stroke-dashoffset={`calc(251.2 - (251.2 * ${progress}) / 100)`}
+      stroke-dashoffset={`calc(251.2px - (251.2px * ${progress}) / 100)`}
       stroke-linecap="round"
       stroke-width="10"
     ></circle>

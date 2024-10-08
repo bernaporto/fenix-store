@@ -42,7 +42,7 @@ export const RadialProgressBar: React.FC<TRadialProgressBarProps> = ({
             transformOrigin: '50% 50%',
           }}
           strokeDasharray="251.2"
-          strokeDashoffset={`calc(251.2 - (251.2 * ${progress}) / 100)`}
+          strokeDashoffset={`calc(251.2px - (251.2px * ${progress}) / 100)`}
           strokeLinecap="round"
           strokeWidth="10"
         ></circle>
