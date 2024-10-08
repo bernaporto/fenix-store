@@ -1,8 +1,8 @@
 ROOT_DIR=$(pwd)
-OUT_DIR=demos
+OUT_DIR=examples/build/fenix-store
 PROJECTS=(
-  todo-app/fenix-store-todo-react
-  todo-app/fenix-store-todo-svelte
+  example-todo-react
+  example-todo-svelte
 )
 
 # Clean up output folder
@@ -14,6 +14,8 @@ do
   PROJECT_DIR=examples/$project
 
   cd $PROJECT_DIR
+
+  yarn
 
   yarn build
 
