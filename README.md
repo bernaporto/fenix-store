@@ -123,10 +123,7 @@ console.log(changeStack.at(-1));
 // { path: 'user.name', next: 'Jane Doe', previous: 'John Doe' }
 ```
 
-## Contributing
+## Examples
 
-Feedback and contributions are always welcome!
-
-## Authors
-
-- [@bernardoporto](https://www.github.com/bernaporto)
+- [Todo App (React)](https://github.com/bernaporto/example-todo-react)
+- [Todo App (Svelte)](https://github.com/bernaporto/example-todo-svelte)
