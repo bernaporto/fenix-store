@@ -156,3 +156,5 @@ dist
 # ignore yarn.lock files inside examples folder to avoid dependabot alerts
 examples/**/yarn.lock
 examples/build
+
+temp/
