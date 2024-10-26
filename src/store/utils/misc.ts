@@ -1,4 +1,4 @@
-import { parsePath } from '@bernaporto/utilities';
+import { parsePath } from '@/tools';
 import { TObservableProxy } from '../ObservableProxy/types';
 
 type ProxyEntry = [string, TObservableProxy<unknown>];

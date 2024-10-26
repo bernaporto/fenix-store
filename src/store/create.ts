@@ -1,4 +1,4 @@
-import { deleteAtPath, getFromPath, setAtPath } from '@bernaporto/utilities';
+import { deleteAtPath, getFromPath, setAtPath } from '@/tools';
 import { EffectManager } from './EffectManager';
 import {
   ensureConfig,

@@ -1,4 +1,4 @@
-import { isNotNullable } from '@bernaporto/utilities';
+import { isNotNullable } from '@/tools';
 import { TUtils } from '../types';
 import type { TEffectManager, TEffectHandler, TStoreEffect } from './types';
 
