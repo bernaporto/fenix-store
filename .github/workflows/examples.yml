@@ -7,6 +7,10 @@ on:
 
 jobs:
   build:
+    # Disable job.
+    # TODO: implement gihub pages deployment.
+    if: false
+
     runs-on: ubuntu-latest
 
     steps:
