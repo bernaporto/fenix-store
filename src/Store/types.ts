@@ -1,4 +1,4 @@
-import type { TObservableLike } from './ObservableProxy/types';
+import type { TObservableLike } from './ObservableController/types';
 import { TEffectHandler } from './EffectManager/types';
 
 export type TState = Record<string, unknown>;

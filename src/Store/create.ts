@@ -7,11 +7,11 @@ import {
   log,
   sortByPathLength,
 } from './utils';
-import { ObservableProxy } from './ObservableProxy';
+import { ObservableController } from './ObservableController';
 import type {
   TObservableLike,
-  TObservableProxy,
-} from './ObservableProxy/types';
+  TObservableController,
+} from './ObservableController/types';
 import type { TOptionalStoreConfig, TState, TStore } from './types';
 
 export const create = <T extends TState = TState>(
@@ -21,13 +21,13 @@ export const create = <T extends TState = TState>(
   const _config = ensureConfig(config);
   const utils = _config.utils;
 
-  const proxies = new Map<string, TObservableProxy<unknown>>();
+  const cache = new Map<string, TObservableController<unknown>>();
   const effects = EffectManager.create(utils);
 
   const initialState = utils.clone(initialValue);
   let state = utils.clone(initialValue);
 
-  const createProxy = (path: string) => {
+  const createController = (path: string) => {
     const cloneAndSet = (next: unknown) => {
       setAtPath(path, utils.clone(next), state);
     };
@@ -36,7 +36,7 @@ export const create = <T extends TState = TState>(
       return utils.clone(getFromPath(p, state));
     };
 
-    const proxy = ObservableProxy.create({
+    const c = ObservableController.create({
       initialValue: getFromPath(path, initialState),
 
       getValue: () => getCloned(path),
@@ -60,7 +60,7 @@ export const create = <T extends TState = TState>(
         if (_config.debug) {
           log({
             path,
-            observers: proxy.observers.size,
+            observers: c.observers.size,
             baseMsg: getDebugMessage(`store.${logKey}`, _config.debugKey),
             next: utils.clone(next),
             previous: utils.clone(previous),
@@ -68,10 +68,10 @@ export const create = <T extends TState = TState>(
         }
 
         /* 5. Notify observers */
-        proxy.notify(getCloned(path));
+        c.notify(getCloned(path));
 
         /* 6. Notify other affected observables */
-        Array.from(proxies.entries())
+        Array.from(cache.entries())
           .filter(isRelatedTo(path))
           .sort(sortByPathLength)
           .forEach(([p, ob]) => {
@@ -80,17 +80,17 @@ export const create = <T extends TState = TState>(
       },
     });
 
-    proxies.set(path, proxy);
+    cache.set(path, c);
 
-    return proxy;
+    return c;
   };
 
   const store: TStore<T> = {
     effects: effects.handler,
 
     clear: () => {
-      proxies.forEach((proxy) => proxy.observers.clear());
-      proxies.clear();
+      cache.forEach((c) => c.observers.clear());
+      cache.clear();
     },
 
     get: () => {
@@ -98,9 +98,9 @@ export const create = <T extends TState = TState>(
     },
 
     on: <T>(path: string): TObservableLike<T> => {
-      const proxy = proxies.get(path) ?? createProxy(path);
+      const c = cache.get(path) ?? createController(path);
 
-      return proxy.observable as TObservableLike<T>;
+      return c.observable as TObservableLike<T>;
     },
 
     reset: () => {
@@ -108,17 +108,17 @@ export const create = <T extends TState = TState>(
       state = utils.clone(initialState);
 
       // 2. cleanup unused proxies
-      Array.from(proxies.entries()).forEach(([path, proxy]) => {
-        if (proxy.observers.size === 0) {
-          proxies.delete(path);
+      Array.from(cache.entries()).forEach(([path, c]) => {
+        if (c.observers.size === 0) {
+          cache.delete(path);
         }
       });
 
       // 3. Reset all valid observables to trigger their observers
-      Array.from(proxies.entries())
+      Array.from(cache.entries())
         // 3.1. Sort by path length to reset children first
         .sort(sortByPathLength)
-        .forEach(([, proxy]) => proxy.observable.reset());
+        .forEach(([, c]) => c.observable.reset());
     },
   };
 

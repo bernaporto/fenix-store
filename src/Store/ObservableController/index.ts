@@ -1,5 +1,5 @@
 import { create } from './create';
 
-export const ObservableProxy = {
+export const ObservableController = {
   create,
 };

@@ -1,12 +1,12 @@
 import { parsePath } from '@/tools';
-import { TObservableProxy } from '../ObservableProxy/types';
+import { TObservableController } from '../ObservableController/types';
 
-type ProxyEntry = [string, TObservableProxy<unknown>];
+type TEntry = [string, TObservableController<unknown>];
 
-export const sortByPathLength = ([a]: ProxyEntry, [b]: ProxyEntry) =>
+export const sortByPathLength = ([a]: TEntry, [b]: TEntry) =>
   parsePath(b).length - parsePath(a).length;
 
 export const isRelatedTo =
   (path: string) =>
-  ([p]: ProxyEntry) =>
+  ([p]: TEntry) =>
     p !== path && (path.startsWith(p) || p.startsWith(path));

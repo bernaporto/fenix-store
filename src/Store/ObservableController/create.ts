@@ -1,4 +1,8 @@
-import type { TObservableProxy, TObservableLike, TObserver } from './types';
+import type {
+  TObservableController,
+  TObservableLike,
+  TObserver,
+} from './types';
 
 type TObservableProxyConfig<T> = {
   initialValue: T;
@@ -11,7 +15,7 @@ export const create = <T>({
   initialValue,
   getValue,
   setValue,
-}: TObservableProxyConfig<T>): TObservableProxy<T> => {
+}: TObservableProxyConfig<T>): TObservableController<T> => {
   const observers = new Set<TObserver<T>>();
 
   const observable: TObservableLike<T> = {

@@ -13,7 +13,7 @@ export type TObservableLike<T> = {
   update: (updater: TUpdater<T>) => void;
 };
 
-export type TObservableProxy<T> = {
+export type TObservableController<T> = {
   observable: TObservableLike<T>;
   observers: Set<TObserver<T>>;
 } & {
