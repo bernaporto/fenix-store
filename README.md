@@ -25,7 +25,7 @@ or with yarn:
   yarn add fenix-store
 ```
 
-## Examples
+## Usage
 
 ```javascript
 import { FenixStore } from 'fenix-store';

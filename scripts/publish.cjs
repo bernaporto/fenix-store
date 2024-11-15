@@ -27,7 +27,7 @@ const tempFilepath = join(tempDir, 'package.json');
 writeFileSync(tempFilepath, JSON.stringify(newPackageJson, null, 2));
 
 // Run npm publish with the temporary package.json
-execSync(`npm publish --package-lock-only ${tempDir}`);
+execSync(`npm publish --package-lock-only ${tempDir} --access public`);
 
 // Clean up the temporary package.json
 unlinkSync(tempFilepath);

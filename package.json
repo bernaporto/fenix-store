@@ -1,8 +1,7 @@
 {
-  "name": "@bernaporto/fenix-store",
+  "name": "fenix-store",
   "version": "0.1.0",
   "description": "A simple and powerful state management library for JavaScript applications",
-  "author": "Bernardo Porto | @bernaporto",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",

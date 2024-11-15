@@ -4,18 +4,17 @@ on:
   push:
     branches:
       - master
+    # tags:
+    #   - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   publish:
     # Disable job.
-    # TODO: solve npm/github configurations.
-    if: false
-
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -41,10 +40,10 @@ jobs:
       - name: Run tests
         run: yarn test
 
-      - name: Configure npm authentication
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      - name: Build
+        run: yarn build
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
