@@ -1,22 +1,29 @@
-import { defineConfig, configDefaults } from 'vitest/config'
+import { defineConfig, configDefaults } from 'vitest/config';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import dts from 'vite-plugin-dts';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    tsconfigPaths({ ignoreConfigErrors: true, }),
+    tsconfigPaths({ ignoreConfigErrors: true }),
     dts({ rollupTypes: true, exclude: ['**/*.test.ts', 'examples'] }),
   ],
-  build: {
-    sourcemap: true,
-    test: {
-      include: ['./src/**/*.test.*'],
+  test: {
+    include: ['./src/**/*.test.*'],
+    exclude: [...configDefaults.exclude, './examples/**/*'],
+    coverage: {
+      include: ['src/**/*'],
       exclude: [
-        ...configDefaults.exclude,
-        './examples/*'
+        'src/index.ts',
+        '**/*.test.ts',
+        '**/*.types.ts',
+        '**/types.ts',
+        'examples/**/*',
       ],
     },
+  },
+  build: {
+    sourcemap: true,
     lib: {
       entry: ['src/index.ts'],
       formats: ['cjs', 'es'],
