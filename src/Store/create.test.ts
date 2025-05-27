@@ -237,6 +237,23 @@ describe('Store', () => {
 
       expect(observable.get()).toBeUndefined();
     });
+
+    it('should handle errors in effects gracefully', () => {
+      const store = FenixStore.create();
+      const effect = vi.fn(() => {
+        throw new Error('Test error');
+      });
+      store.effects.use(effect);
+
+      const warnMock = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const observable = store.on('key');
+
+      expect(() => observable.set(1)).not.toThrow();
+      expect(observable.get()).toBe(1);
+      expect(effect).toHaveBeenCalled();
+
+      warnMock.mockRestore();
+    });
   });
 
   describe('config.debug', () => {

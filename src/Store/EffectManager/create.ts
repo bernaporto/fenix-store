@@ -13,7 +13,7 @@ export const create = (utils: TUtils): TEffectManager => {
     list: () => Array.from(effects),
 
     use: (effect) => {
-      effects.add(effect as TStoreEffect<unknown>);
+      effects.add(safeEffect(effect) as TStoreEffect<unknown>);
     },
   };
 
@@ -39,5 +39,16 @@ export const create = (utils: TUtils): TEffectManager => {
         next,
       );
     },
+  };
+};
+
+const safeEffect = <T>(effect: TStoreEffect<T>): TStoreEffect<T> => {
+  return (path, next, previous) => {
+    try {
+      return effect(path, next, previous);
+    } catch (error) {
+      console.warn(`Effect failed for path "${path}":`, error);
+      return { next }; // Fallback to original value
+    }
   };
 };
