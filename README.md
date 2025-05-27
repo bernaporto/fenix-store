@@ -1,6 +1,8 @@
 # Fenix Store
 
-A simple and powerful state management library for JavaScript applications. It provides a reactive API to manage the state of your application.
+## Lightweight (3kb) • Reactive • Zero Dependencies
+
+A tiny but powerful state management library for JavaScript applications. It provides a reactive API to manage the state of your application.
 
 ### Why?
 
