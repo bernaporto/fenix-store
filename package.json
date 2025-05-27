@@ -20,7 +20,7 @@
     "prebuild": "tsc",
     "publish": "node ./scripts/publish.cjs",
     "build": "vite build",
-    "build:dev": "yarn --ignore-scripts vite build --mode development",
+    "build:dev": "pnpm --ignore-scripts vite build --mode development",
     "build:examples": "sh scripts/build-examples.sh",
     "prepare": "husky"
   },
@@ -42,8 +42,8 @@
   },
   "lint-staged": {
     "src/**/*.{js,ts}": [
-      "yarn lint",
-      "yarn format"
+      "pnpm lint",
+      "pnpm format"
     ]
   }
 }

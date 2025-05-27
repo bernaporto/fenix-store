@@ -21,29 +21,29 @@ jobs:
         with:
           node-version: '20' # Specify the Node.js version
 
-      - name: Cache Yarn dependencies
+      - name: Cache pnpm dependencies
         uses: actions/cache@v2
         with:
           path: |
-            ~/.cache/yarn
+            ~/.cache/pnpm
             **/node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-pnpm-
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Run linter
-        run: yarn lint
+        run: pnpm lint
 
       - name: Run tests
-        run: yarn test
+        run: pnpm test
 
       - name: Build
-        run: yarn build
+        run: pnpm build
 
       - name: Publish to npm
-        run: yarn publish
+        run: pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

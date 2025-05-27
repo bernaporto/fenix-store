@@ -15,9 +15,8 @@ do
 
   cd $PROJECT_DIR
 
-  yarn
-
-  yarn build
+  pnpm install
+  pnpm build
 
   cd $ROOT_DIR
 
