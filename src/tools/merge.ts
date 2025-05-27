@@ -1,5 +1,3 @@
-import { isNullable } from './nullable';
-
 export const merge = <T>(a: unknown, b: unknown): T => {
   if (typeof a !== typeof b) {
     return (b ?? a) as T;
@@ -24,25 +22,4 @@ export const merge = <T>(a: unknown, b: unknown): T => {
     );
     return acc;
   }, Object.create(null)) as T;
-};
-
-export const shallowMerge = <T>(...objects: (T | null | undefined)[]): T => {
-  return objects.reduce((acc, obj) => {
-    if (isNullable(obj)) {
-      return acc;
-    }
-
-    if (Array.isArray(obj)) {
-      return [...acc, ...obj] as T;
-    }
-
-    if (typeof obj === 'object' && obj !== null) {
-      Object.keys(obj).forEach((key) => {
-        acc[key] = obj[key as keyof typeof obj];
-      });
-      return acc;
-    }
-
-    return acc;
-  }, Object.create(null));
 };
