@@ -1,10 +1,9 @@
-import { parsePath } from '@/tools';
-import { TObservableController } from '../ObservableController/types';
+import type { TCacheItem } from '../types';
 
-type TEntry = [string, TObservableController<unknown>];
+type TEntry = [string, TCacheItem];
 
-export const sortByPathLength = ([a]: TEntry, [b]: TEntry) =>
-  parsePath(b).length - parsePath(a).length;
+export const sortByPathLength = ([, a]: TEntry, [, b]: TEntry) =>
+  b.parsedPath.length - a.parsedPath.length;
 
 export const isRelatedTo =
   (path: string) =>

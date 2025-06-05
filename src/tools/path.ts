@@ -5,12 +5,18 @@ type TUnknownObject = Record<string, unknown>;
 const PATH_SEPARATOR = '.';
 
 export const parsePath = (path: string): string[] => path.split(PATH_SEPARATOR);
+const getPathKeys = (path: string | string[]): string[] =>
+  Array.isArray(path) ? path : parsePath(path);
 
 export const getFromPath = (
-  path: string,
+  path: string | string[],
   obj: TUnknownObject,
 ): unknown | undefined => {
-  const keys = parsePath(path);
+  if (path.length === 0 || isNullable(obj)) {
+    return undefined;
+  }
+
+  const keys = getPathKeys(path);
 
   return keys.reduce<unknown>((acc, key) => {
     if (!acc || typeof acc !== 'object') {
@@ -22,15 +28,15 @@ export const getFromPath = (
 };
 
 export const setAtPath = (
-  path: string,
+  path: string | string[],
   value: unknown,
   obj: TUnknownObject,
 ): void => {
-  if (isNullable(obj)) {
+  if (isNullable(obj) || path.length === 0) {
     return;
   }
 
-  const keys = parsePath(path);
+  const keys = getPathKeys(path);
 
   keys.reduce((acc, key, index) => {
     if (index < keys.length - 1) {
@@ -49,12 +55,16 @@ export const setAtPath = (
   }, obj);
 };
 
-export const deleteAtPath = (path: string, obj: TUnknownObject): boolean => {
-  if (isNullable(obj)) {
+export const deleteAtPath = (
+  path: string | string[],
+  obj: TUnknownObject,
+): boolean => {
+  if (isNullable(obj) || path.length === 0) {
     return false;
   }
 
-  const keys = parsePath(path);
+  const keys = getPathKeys(path);
+
   const targetKey = keys.pop();
   let targetObj = obj;
 

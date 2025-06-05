@@ -1,4 +1,7 @@
-import type { TObservableLike } from './ObservableController/types';
+import type {
+  TObservableController,
+  TObservableLike,
+} from './ObservableController/types';
 import { TEffectHandler } from './EffectManager/types';
 
 export type TState = Record<string, unknown>;
@@ -27,4 +30,9 @@ export type TOptionalStoreConfig = Omit<Partial<TStoreConfig>, 'utils'> & {
 export type TUtils = {
   clone: <T>(value: T) => T;
   equals: (a: unknown, b: unknown) => boolean;
+};
+
+export type TCacheItem = {
+  controller: TObservableController<unknown>;
+  parsedPath: string[];
 };
