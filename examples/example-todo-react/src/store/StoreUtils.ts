@@ -1,13 +1,11 @@
 import { store } from './store';
-import { StorePath } from './StorePath';
-import type { TTaskItem } from '../types';
 
 export const StoreUtils = {
   tasks: {
     create: (label: string) => {
       const id = Date.now().toString();
 
-      store.on<TTaskItem>(StorePath.TASK(id)).set({
+      store.on(`tasks.items.${id}`).set({
         id,
         label,
         completed: false,
@@ -15,13 +13,13 @@ export const StoreUtils = {
     },
 
     delete: (id: string) => {
-      store.on(StorePath.TASK(id)).reset();
+      store.on(`tasks.items.${id}`).reset();
     },
   },
 
   darkMode: {
     toggle: () => {
-      store.on(StorePath.DARK_MODE).update((curr) => !curr);
+      store.on('darkMode').update((curr) => !curr);
     },
   },
 };

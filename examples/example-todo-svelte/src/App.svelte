@@ -2,10 +2,10 @@
   import AppBody from './components/AppBody.svelte';
   import AppFooter from './components/AppFooter.svelte';
   import AppHeader from './components/AppHeader.svelte';
-  import { StorePath, store } from './store';
+  import { store } from './store';
   import { classNames } from './utils/classNames';
 
-  const darkMode = store.on<boolean>(StorePath.DARK_MODE);
+  const darkMode = store.on('darkMode');
 </script>
 
 <div

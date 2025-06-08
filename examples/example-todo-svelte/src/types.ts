@@ -1,4 +1,4 @@
-export type TTaskItem = {
+type TTaskItem = {
   completed: boolean;
   id: string;
   label: string;

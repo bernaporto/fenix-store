@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { StorePath, store } from '../store';
+  import { store } from '../store';
   import TaskItem from './TaskItem.svelte';
 
-  const tasks = store.on<string[]>(StorePath.TASK_IDS);
+  const tasks = store.on(`tasks.ids`);
 </script>
 
 <section class="flex-1 flex flex-col gap-3 overflow-y-auto">

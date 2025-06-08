@@ -1,13 +1,12 @@
 <script lang="ts">
-  import { StorePath, store } from '../store';
-  import type { TTaskItem } from '../types';
+  import { store } from '../store';
   import { classNames } from '../utils/classNames';
 
   let value = '';
   const handleAddTask = () => {
     const id = Date.now().toString();
 
-    store.on<TTaskItem>(StorePath.TASK(id)).set({
+    store.on(`tasks.items.${id}`).set({
       id,
       completed: false,
       label: value,

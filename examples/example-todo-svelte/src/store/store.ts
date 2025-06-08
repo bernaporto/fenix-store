@@ -1,6 +1,5 @@
-import { FenixStore } from '@bernaporto/fenix-store';
-import type { TAppState, TTaskMap } from '../types';
-import { StorePath } from './StorePath';
+import { FenixStore } from 'fenix-store';
+import type { TAppState } from '../types';
 import { Storage } from './Storage';
 
 const equals = (a: unknown, b: unknown): boolean => {
@@ -39,35 +38,35 @@ const getStore = () => {
   const maybeTasks = Storage.tasks.get();
   if (maybeTasks !== null) {
     Object.keys(maybeTasks).forEach((id) => {
-      store.on(StorePath.TASK(id)).set(maybeTasks[id]);
+      store.on(`tasks.items.${id}`).set(maybeTasks[id]);
     });
   }
 
   // Load dark mode from storage
   const maybeDarkMode = Storage.darkMode.get();
   if (maybeDarkMode !== null) {
-    store.on(StorePath.DARK_MODE).set(maybeDarkMode);
+    store.on('darkMode').set(maybeDarkMode);
   }
 
   // Subscribe to item changes
-  store.on<TTaskMap>(StorePath.TASKS).subscribe((tasks) => {
+  store.on('tasks.items').subscribe((tasks) => {
     const taskList = Object.values(tasks);
 
     // 1. Save to storage
     Storage.tasks.save(tasks);
 
     // 2. Update the ids list
-    store.on<string[]>(StorePath.TASK_IDS).set(taskList.map(({ id }) => id));
+    store.on('tasks.ids').set(taskList.map(({ id }) => id));
 
     // 3. Update total and completed tasks count
-    store.on(StorePath.TOTAL).set(taskList.length);
+    store.on('progress.total').set(taskList.length);
     store
-      .on(StorePath.COMPLETED)
+      .on('progress.completed')
       .set(taskList.filter((task) => task.completed).length);
   });
 
   // Subscribe to dark mode changes
-  store.on<boolean>(StorePath.DARK_MODE).subscribe((darkMode) => {
+  store.on('darkMode').subscribe((darkMode) => {
     Storage.darkMode.save(darkMode);
   });
 

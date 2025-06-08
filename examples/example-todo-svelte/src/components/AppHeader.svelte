@@ -1,8 +1,8 @@
 <script lang="ts">
   import Switch from '../lib/Switch.svelte';
-  import { StorePath, store } from '../store';
+  import { store } from '../store';
 
-  const darkMode = store.on<boolean>(StorePath.DARK_MODE);
+  const darkMode = store.on('darkMode');
   const toggleDarkMode = () => darkMode.update((curr) => !curr);
 </script>
 

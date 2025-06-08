@@ -8,12 +8,12 @@ importers:
 
   .:
     dependencies:
-      '@bernaporto/fenix-store':
-        specifier: file:../..
-        version: fenix-store@file:../..
       bootstrap-icons:
         specifier: ^1.11.3
         version: 1.13.1
+      fenix-store:
+        specifier: file:../..
+        version: file:../..
       react:
         specifier: ^18.2.0
         version: 18.3.1

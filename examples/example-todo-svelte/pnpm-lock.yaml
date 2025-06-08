@@ -8,12 +8,12 @@ importers:
 
   .:
     dependencies:
-      '@bernaporto/fenix-store':
-        specifier: file:../..
-        version: fenix-store@file:../..
       bootstrap-icons:
         specifier: ^1.11.3
         version: 1.13.1
+      fenix-store:
+        specifier: file:../..
+        version: file:../..
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2

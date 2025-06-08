@@ -1,3 +1,2 @@
-export { store } from './store';
-export { StorePath } from './StorePath';
+export { store, type TStorePaths } from './store';
 export { StoreUtils } from './StoreUtils';

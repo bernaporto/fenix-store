@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { store } from '../store';
+import { store, type TStorePaths } from '../store';
 
-export const useStore = <T>(path: string) => {
-  const ob = useMemo(() => store.on<T>(path), [path]);
-  const [value, setValue] = useState<T>(ob.get());
+export const useStore = <Path extends TStorePaths>(path: Path) => {
+  const ob = useMemo(() => store.on(path), [path]);
+  const [value, setValue] = useState(ob.get());
 
   useEffect(
     () =>

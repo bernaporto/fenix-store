@@ -1,10 +1,10 @@
 <script lang="ts">
   import Card from '../lib/Card.svelte';
   import RadialProgressBar from '../lib/RadialProgressBar.svelte';
-  import { StorePath, store } from '../store';
+  import { store } from '../store';
 
-  const total = store.on<number>(StorePath.TOTAL);
-  const completed = store.on<number>(StorePath.COMPLETED);
+  const total = store.on('progress.total');
+  const completed = store.on('progress.completed');
 
   $: percetage = $total !== 0 ? ($completed / $total) * 100 : 0;
 </script>

@@ -7,7 +7,7 @@ export const AppFooter: React.FC = () => {
         rel="noopener noreferrer"
         target="_blank"
       >
-        @bernaporto/fenix-store
+        fenix-store
       </a>
     </footer>
   );

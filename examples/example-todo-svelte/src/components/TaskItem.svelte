@@ -1,14 +1,14 @@
 <script lang="ts">
   import Card from '../lib/Card.svelte';
   import Checkbox from '../lib/Checkbox.svelte';
-  import { StorePath, store } from '../store';
+  import { store } from '../store';
   import { classNames } from '../utils/classNames';
 
   export let id: string;
 
-  $: taskPath = StorePath.TASK(id);
-  $: completed = store.on<boolean>(`${taskPath}.completed`);
-  $: label = store.on<string>(`${taskPath}.label`);
+  $: taskPath = `tasks.items.${id}` as const;
+  $: completed = store.on(`${taskPath}.completed`);
+  $: label = store.on(`${taskPath}.label`);
 
   const toggleCompleted = () => {
     completed.update((curr) => !curr);
