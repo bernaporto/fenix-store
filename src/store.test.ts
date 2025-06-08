@@ -1,10 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
 import { FenixStore } from './Store';
 
+type TState = {
+  user: {
+    name: string;
+    age?: number;
+  };
+};
+
 /* README EXAMPLES */
 describe('FenixStore', () => {
   it('should handle state changes', () => {
-    const store = FenixStore.create();
+    const store = FenixStore.create<TState>();
 
     expect(store.get()).toEqual({});
 
@@ -15,7 +22,7 @@ describe('FenixStore', () => {
   });
 
   it('should handle subscriptions', () => {
-    const store = FenixStore.create();
+    const store = FenixStore.create<TState>();
 
     const observer1 = vi.fn();
     const unsubscribe = store.on('user.name').subscribe(observer1, false);
@@ -31,7 +38,7 @@ describe('FenixStore', () => {
   });
 
   it('should gracefully handle missing paths', () => {
-    const store = FenixStore.create();
+    const store = FenixStore.create<TState>();
 
     store.on('user.name').set('John Doe');
     expect(store.on('user.name').get()).toEqual('John Doe');
@@ -41,7 +48,7 @@ describe('FenixStore', () => {
   });
 
   it('should gracefully handle equality checks', () => {
-    const store = FenixStore.create();
+    const store = FenixStore.create<TState>();
 
     const observable = store.on('user.name');
     const observer1 = vi.fn();
@@ -58,7 +65,7 @@ describe('FenixStore', () => {
   });
 
   it('should apply effects (1)', () => {
-    const store = FenixStore.create();
+    const store = FenixStore.create<TState>();
 
     store.effects.use((path, next) => {
       if (path !== 'user.name') return;
@@ -77,7 +84,7 @@ describe('FenixStore', () => {
   });
 
   it('should apply effects (2)', () => {
-    const store = FenixStore.create();
+    const store = FenixStore.create<TState>();
     const changeStack: unknown[] = [];
 
     store.effects.use((path, next, previous) => {
@@ -99,7 +106,7 @@ describe('FenixStore', () => {
   });
 
   it('should allow to clear effects', () => {
-    const store = FenixStore.create();
+    const store = FenixStore.create<TState>();
 
     const effect = vi.fn();
     store.effects.use(effect);

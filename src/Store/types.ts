@@ -3,13 +3,16 @@ import type {
   TObservableLike,
 } from './ObservableController/types';
 import { TEffectHandler } from './EffectManager/types';
+import { Get, Paths } from '@/tools/types';
 
 export type TState = Record<string, unknown>;
 
 export type TStoreObservable<T> = TObservableLike<T>;
 
 export type TStore<State extends TState> = {
-  on: <T>(path: string) => TStoreObservable<T>;
+  on: <Path extends Paths<State>>(
+    path: Path,
+  ) => TStoreObservable<Get<State, Path>>;
   get: () => State;
 } & {
   clear: VoidFunction;

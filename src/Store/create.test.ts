@@ -81,8 +81,8 @@ describe('Store', () => {
 
   describe('on', () => {
     it('should return an observable', () => {
-      const store = FenixStore.create();
-      const observable = store.on<number>('key');
+      const store = FenixStore.create<{ key: number }>();
+      const observable = store.on('key');
 
       expect(observable).toBeDefined();
       expect(observable).toHaveProperty('get');
@@ -123,7 +123,12 @@ describe('Store', () => {
 
   describe('reset', () => {
     it('should reset the state to its initial value', () => {
-      const store = FenixStore.create({
+      const store = FenixStore.create<{
+        key1: number;
+        key2?: {
+          key3: number;
+        };
+      }>({
         key1: 0,
         key2: {
           key3: 0,
@@ -144,7 +149,13 @@ describe('Store', () => {
     });
 
     it('should notify all affected observables', () => {
-      const store = FenixStore.create({
+      const store = FenixStore.create<{
+        key1: number;
+        key2: {
+          key3: number;
+          key4?: string;
+        };
+      }>({
         key1: 0,
         key2: {
           key3: 0,

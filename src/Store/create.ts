@@ -10,9 +10,10 @@ import {
 import { ObservableController } from './ObservableController';
 import type { TObservableLike } from './ObservableController/types';
 import type { TCacheItem, TOptionalStoreConfig, TState, TStore } from './types';
+import { Get, Paths } from '@/tools/types';
 
 export const create = <T extends TState = TState>(
-  initialValue: T = Object.create(null),
+  initialValue?: T,
   config?: TOptionalStoreConfig,
 ): TStore<T> => {
   const _config = ensureConfig(config);
@@ -21,8 +22,10 @@ export const create = <T extends TState = TState>(
   const cache = new Map<string, TCacheItem>();
   const effects = EffectManager.create(utils);
 
-  const initialState = utils.clone(initialValue);
-  let state = utils.clone(initialValue);
+  const initialState = initialValue
+    ? utils.clone(initialValue)
+    : Object.create(null);
+  let state = utils.clone(initialState);
 
   const createController = (path: string) => {
     const parsedPath = parsePath(path);
@@ -96,10 +99,10 @@ export const create = <T extends TState = TState>(
       return utils.clone(state);
     },
 
-    on: <T>(path: string): TObservableLike<T> => {
+    on: <Path extends Paths<T>>(path: Path) => {
       const c = cache.get(path)?.controller ?? createController(path);
 
-      return c.observable as TObservableLike<T>;
+      return c.observable as TObservableLike<Get<T, Path>>;
     },
 
     reset: () => {
