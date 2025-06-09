@@ -27,13 +27,7 @@ export default defineConfig({
     lib: {
       entry: ['src/index.ts'],
       formats: ['cjs', 'es'],
-    },
-    rollupOptions: {
-      output: {
-        dir: 'dist',
-        entryFileNames: '[name].[format].js',
-        chunkFileNames: '[name].[format].js',
-      },
+      fileName: (format, name) => `${name}.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
   },
 });

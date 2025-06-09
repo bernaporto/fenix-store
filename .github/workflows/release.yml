@@ -1,0 +1,223 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 1.0.0, patch, minor, major)'
+        required: true
+        default: 'patch'
+      dry-run:
+        description: 'Dry run (no actual release)'
+        type: boolean
+        default: false
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pnpm
+            **/node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run full test suite
+        run: |
+          pnpm lint
+          pnpm test
+          pnpm prebuild
+
+      - name: Build production bundle
+        run: pnpm build
+
+      - name: Generate bundle analysis
+        run: pnpm bundle:analyze
+
+      - name: Check bundle size guidelines
+        run: pnpm size:check
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Version bump
+        if: ${{ !inputs.dry-run }}
+        run: |
+          if [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            npm version ${{ inputs.version }} --no-git-tag-version
+          else
+            npm version ${{ inputs.version }} --no-git-tag-version
+          fi
+
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Generate release notes
+        run: |
+          # Read bundle analysis
+          BUNDLE_REPORT=$(cat bundle-analysis/bundle-report.json)
+          ESM_SIZE=$(echo $BUNDLE_REPORT | jq -r '.esm.gzipped')
+          CJS_SIZE=$(echo $BUNDLE_REPORT | jq -r '.cjs.gzipped')
+
+          # Create release notes
+          cat > RELEASE_NOTES.md << EOF
+          ## 🚀 Release v${{ env.NEW_VERSION }}
+
+          ### 📊 Bundle Information
+          - **ESM Bundle:** ${ESM_SIZE} (gzipped)
+          - **CJS Bundle:** ${CJS_SIZE} (gzipped)
+          - **Tree-shaking:** ✅ Supported
+          - **TypeScript:** ✅ Full support with types
+
+          ### 🔍 Quality Metrics
+          - ✅ All tests passing
+          - ✅ Linting clean
+          - ✅ Bundle size within limits
+          - ✅ TypeScript compilation successful
+
+          ### 📦 Installation
+          \`\`\`bash
+          npm install fenix-store@${{ env.NEW_VERSION }}
+          # or
+          pnpm add fenix-store@${{ env.NEW_VERSION }}
+          \`\`\`
+
+          ### 🔗 Resources
+          - [Documentation](https://github.com/${{ github.repository }}#readme)
+          - [Bundle Analysis](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+          ---
+          *Generated automatically by GitHub Actions*
+          EOF
+
+      - name: Commit version bump
+        if: ${{ !inputs.dry-run }}
+        run: |
+          git add package.json
+          git commit -m "chore: bump version to v${{ env.NEW_VERSION }}"
+          git tag -a "v${{ env.NEW_VERSION }}" -m "Release v${{ env.NEW_VERSION }}"
+
+      - name: Push changes
+        if: ${{ !inputs.dry-run }}
+        run: |
+          git push origin main
+          git push origin "v${{ env.NEW_VERSION }}"
+
+      - name: Create GitHub Release
+        if: ${{ !inputs.dry-run }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.NEW_VERSION }}
+          release_name: Release v${{ env.NEW_VERSION }}
+          body_path: RELEASE_NOTES.md
+          draft: false
+          prerelease: false
+
+      - name: Upload bundle analysis to release
+        if: ${{ !inputs.dry-run }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: bundle-analysis/treemap.html
+          asset_name: bundle-treemap.html
+          asset_content_type: text/html
+
+      - name: Publish to npm
+        if: ${{ !inputs.dry-run }}
+        run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Test npm connection
+        if: ${{ inputs.dry-run }}
+        run: |
+          echo "🔍 Testing npm connection..."
+
+          # Test npm authentication
+          if npm whoami; then
+            echo "✅ npm authentication successful"
+            NPM_USER=$(npm whoami)
+            echo "📝 Authenticated as: $NPM_USER"
+          else
+            echo "❌ npm authentication failed"
+            echo "NODE_AUTH_TOKEN is likely not configured correctly"
+            exit 1
+          fi
+
+          # Test package publishing permissions (dry-run)
+          echo "📦 Testing publish permissions..."
+          if npm publish --dry-run; then
+            echo "✅ npm publish permissions verified"
+            echo "📋 Package would be published successfully"
+          else
+            echo "❌ npm publish would fail"
+            echo "Check package name conflicts or permissions"
+            exit 1
+          fi
+
+          # Show npm configuration
+          echo "⚙️ npm configuration:"
+          npm config get registry
+          npm config get //registry.npmjs.org/:_authToken | head -c 10
+          echo "... (truncated)"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Dry run summary
+        if: ${{ inputs.dry-run }}
+        run: |
+          echo "## 🧪 Dry Run Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### What would happen:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ All quality checks passed" >> $GITHUB_STEP_SUMMARY
+          echo "- 📦 Bundle built successfully" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔗 npm connection verified" >> $GITHUB_STEP_SUMMARY
+          echo "- 📊 Bundle size: ESM $(cat bundle-analysis/size-report.json | jq -r '.bundles[] | select(.format=="ESM") | .gzipSize'), CJS $(cat bundle-analysis/size-report.json | jq -r '.bundles[] | select(.format=="CJS") | .gzipSize')" >> $GITHUB_STEP_SUMMARY
+          echo "- 🏷️ Would create tag: v${{ inputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- 📝 Release notes generated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Ready for actual release!** Set dry-run to false to proceed." >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-artifacts-${{ github.run_number }}
+          path: |
+            dist/
+            bundle-analysis/
+            RELEASE_NOTES.md
+          retention-days: 30

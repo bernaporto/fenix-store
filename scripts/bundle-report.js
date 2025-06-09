@@ -25,7 +25,7 @@ async function analyzeBundles() {
   const results = await processFiles(distPath);
 
   if (results.length === 0) {
-    console.error('❌ No JavaScript files found in dist folder.');
+    console.error('❌ No bundle files found in dist folder.');
     process.exit(1);
   }
 
@@ -35,7 +35,9 @@ async function analyzeBundles() {
 }
 
 async function processFiles(distPath) {
-  const files = fs.readdirSync(distPath).filter((f) => f.endsWith('.js'));
+  const files = fs
+    .readdirSync(distPath)
+    .filter((f) => f.endsWith('.cjs') || f.endsWith('.mjs'));
   const results = [];
 
   for (const file of files) {
@@ -72,8 +74,8 @@ async function processFiles(distPath) {
 }
 
 function getFormatFromFilename(filename) {
-  if (filename.includes('.es.')) return 'ESM';
-  if (filename.includes('.cjs.')) return 'CJS';
+  if (filename.endsWith('.mjs')) return 'ESM';
+  if (filename.endsWith('.cjs')) return 'CJS';
   if (filename.includes('.umd.')) return 'UMD';
   return 'Unknown';
 }
@@ -160,6 +162,7 @@ function saveReport(results) {
     fs.mkdirSync(reportDir, { recursive: true });
   }
 
+  // Enhanced report structure
   const report = {
     timestamp: new Date().toISOString(),
     buildTool: 'Vite',
@@ -175,12 +178,42 @@ function saveReport(results) {
     },
   };
 
+  // Save detailed report
   fs.writeFileSync(
     path.join(reportDir, 'size-report.json'),
     JSON.stringify(report, null, 2),
   );
 
+  // Create CI-friendly bundle report
+  const ciReport = {
+    esm: results.find((r) => r.format === 'ESM')
+      ? {
+          raw: results.find((r) => r.format === 'ESM').rawSize,
+          gzipped: results.find((r) => r.format === 'ESM').gzipSize,
+          rawBytes: results.find((r) => r.format === 'ESM').rawBytes,
+          gzipBytes: results.find((r) => r.format === 'ESM').gzipBytes,
+        }
+      : null,
+    cjs: results.find((r) => r.format === 'CJS')
+      ? {
+          raw: results.find((r) => r.format === 'CJS').rawSize,
+          gzipped: results.find((r) => r.format === 'CJS').gzipSize,
+          rawBytes: results.find((r) => r.format === 'CJS').rawBytes,
+          gzipBytes: results.find((r) => r.format === 'CJS').gzipBytes,
+        }
+      : null,
+    treeshaking: results.some((r) => r.format === 'ESM'),
+    timestamp: new Date().toISOString(),
+    commit: process.env.GITHUB_SHA?.substring(0, 7) || 'local',
+  };
+
+  fs.writeFileSync(
+    path.join(reportDir, 'bundle-report.json'),
+    JSON.stringify(ciReport, null, 2),
+  );
+
   console.log(`\n📄 Detailed report: bundle-analysis/size-report.json`);
+  console.log(`🤖 CI report: bundle-analysis/bundle-report.json`);
 
   const visualizations = [
     'bundle-treemap.html',
