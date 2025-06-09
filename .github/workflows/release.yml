@@ -63,6 +63,9 @@ jobs:
       - name: Build production bundle with analysis
         run: pnpm build:analyze
 
+      - name: Generate bundle report
+        run: pnpm bundle:report
+
       - name: Check bundle size guidelines
         run: pnpm size:check
 
