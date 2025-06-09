@@ -128,14 +128,14 @@ jobs:
         if: ${{ !inputs.dry-run }}
         run: |
           git add package.json
-          git commit -m "chore: bump version to v${{ env.NEW_VERSION }}"
+          git commit --no-verify -m "chore: bump version to v${{ env.NEW_VERSION }}"
           git tag -a "v${{ env.NEW_VERSION }}" -m "Release v${{ env.NEW_VERSION }}"
 
       - name: Push changes
         if: ${{ !inputs.dry-run }}
         run: |
-          git push origin master
-          git push origin "v${{ env.NEW_VERSION }}"
+          git push --no-verify origin master
+          git push --no-verify origin "v${{ env.NEW_VERSION }}"
 
       - name: Create GitHub Release
         if: ${{ !inputs.dry-run }}
@@ -144,7 +144,7 @@ jobs:
             --title "Release v${{ env.NEW_VERSION }}" \
             --notes-file RELEASE_NOTES.md \
             --target master \
-            bundle-analysis/treemap.html#bundle-treemap.html
+            bundle-analysis/bundle-treemap.html#bundle-treemap.html
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
