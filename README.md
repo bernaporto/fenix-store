@@ -1,13 +1,13 @@
 # Fenix Store
 
-## Lightweight • Reactive • Zero Dependencies • TypeScript
+#### Lightweight • Reactive • Zero Dependencies • TypeScript
 
 A tiny but powerful state management library for JavaScript applications. It provides a reactive API to manage the state of your application.
 
-[![CI/CD Pipeline](https://github.com/team-fenix/fenix-store/actions/workflows/ci.yml/badge.svg)](https://github.com/team-fenix/fenix-store/actions/workflows/ci.yml)
+[![CI/CD Pipeline](https://github.com/bernaporto/fenix-store/actions/workflows/ci.yml/badge.svg)](https://github.com/bernaporto/fenix-store/actions/workflows/ci.yml)
 [![Bundle Size](https://img.shields.io/badge/bundle%20size-1.8kb%20gzipped-brightgreen)](#-bundle-analysis)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue)](https://www.typescriptlang.org/)
-[![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/team-fenix/fenix-store)
+[![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/bernaporto/fenix-store)
 
 ### Why?
 
