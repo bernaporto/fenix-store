@@ -1,0 +1,21 @@
+[
+  {
+    "name": "ESM Bundle",
+    "path": "dist/index.es.js",
+    "limit": "5 KB",
+    "gzip": true
+  },
+  {
+    "name": "CommonJS Bundle",
+    "path": "dist/index.cjs.js",
+    "limit": "5.5 KB",
+    "gzip": true
+  },
+  {
+    "name": "Tree-shaking (FenixStore.create only)",
+    "path": "dist/index.es.js",
+    "import": "{ FenixStore }",
+    "limit": "4 KB",
+    "gzip": true
+  }
+]

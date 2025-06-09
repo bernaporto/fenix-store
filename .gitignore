@@ -157,4 +157,7 @@ dist
 examples/**/yarn.lock
 examples/build
 
+# Bundle analysis artifacts
+bundle-analysis/
+
 temp/

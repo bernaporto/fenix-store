@@ -1,1 +1,3 @@
-npm test
+npx pnpm test
+npx pnpm build
+npx pnpm size:check
