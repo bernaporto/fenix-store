@@ -134,7 +134,7 @@ jobs:
       - name: Push changes
         if: ${{ !inputs.dry-run }}
         run: |
-          git push origin main
+          git push origin master
           git push origin "v${{ env.NEW_VERSION }}"
 
       - name: Create GitHub Release
@@ -143,7 +143,7 @@ jobs:
           gh release create "v${{ env.NEW_VERSION }}" \
             --title "Release v${{ env.NEW_VERSION }}" \
             --notes-file RELEASE_NOTES.md \
-            --target main \
+            --target master \
             bundle-analysis/treemap.html#bundle-treemap.html
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
