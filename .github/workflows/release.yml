@@ -60,11 +60,8 @@ jobs:
           pnpm test
           pnpm prebuild
 
-      - name: Build production bundle
-        run: pnpm build
-
-      - name: Generate bundle analysis
-        run: pnpm bundle:analyze
+      - name: Build production bundle with analysis
+        run: pnpm build:analyze
 
       - name: Check bundle size guidelines
         run: pnpm size:check
